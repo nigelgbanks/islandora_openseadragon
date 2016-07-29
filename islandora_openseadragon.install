@@ -9,6 +9,7 @@
  * Implements hook_requirements().
  */
 function islandora_openseadragon_requirements() {
+  module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
   $requirements = array();
   // Ensure translations don't break at install time.
   $t = get_t();
@@ -22,6 +23,21 @@ function islandora_openseadragon_requirements() {
       'description' => $t('OpenSeadragon library missing; please consult the !readme for installation instructions.', array('!readme' => $readme_link)),
       'severity' => REQUIREMENT_ERROR,
     );
+  }
+  else {
+    $installed_version = islandora_openseadragon_get_installed_version();
+    if (version_compare($installed_version, OPENSEADRAGON_REQUIRED_VERSION) < 0) {
+      $readme_link = l($t('README'), drupal_get_path('module', 'islandora_openseadragon') . '/README.txt');
+      $requirements['openseadragon'] = array(
+        'title' => $t('OpenSeadragon library'),
+        'description' => $t('OpenSeadragon library version (%installed_version) does not match required version (%required_version); please consult the !readme for installation instructions.', array(
+          '%installed_version' => $installed_version,
+          '%required_version' => OPENSEADRAGON_REQUIRED_VERSION,
+          '!readme' => $readme_link,
+        )),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
   }
   return $requirements;
 }
@@ -37,4 +53,23 @@ function islandora_openseadragon_uninstall() {
     'islandora_openseadragon_fit_to_aspect_ratio',
   );
   array_walk($variables, 'variable_del');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the required table for handling authentication tokens.
+ * This is the first instance that has this table.
+ *
+ * @param array $sandbox
+ *   Stores information for multipass updates
+ *
+ * @return string
+ *   Translated string that will be displayed to the user after the update has
+ *   completed
+ */
+function islandora_openseadragon_update_7001(array &$sandbox) {
+  $t = get_t();
+  // @todo update variables to new version.
+  return $t("Islandora Openseadragon updates complete");
 }

@@ -8,13 +8,12 @@
 /**
  * The Openseadragon plugin URI.
  */
-define('OPENSEADRAGON_DOWNLOAD_URI', 'http://openseadragon.github.io/releases/openseadragon-bin-0.9.129.zip');
+define('OPENSEADRAGON_DOWNLOAD_URI', 'https://github.com/openseadragon/openseadragon/releases/download/v2.2.1/openseadragon-bin-2.2.1.zip');
 
 /**
  * The original OpenSeadragon directory
  */
-define('OPENSEADRAGON_ORIGINAL_DIR', 'openseadragon-bin-0.9.129');
-
+define('OPENSEADRAGON_ORIGINAL_DIR', 'openseadragon-bin-2.2.1');
 
 /**
  * Implements hook_drush_command().
@@ -37,6 +36,12 @@ function islandora_openseadragon_drush_command() {
 
 /**
  * Implements hook_drush_help().
+ *
+ * @param string $section
+ *   The section in which to display the help message.
+ *
+ * @return string
+ *   The help message.
  */
 function islandora_openseadragon_drush_help($section) {
   switch ($section) {
