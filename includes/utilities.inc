@@ -57,9 +57,9 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
   // Only grab the two parameters that are expected to be there, ignore anything
   // else.
   $allowed_djatoka_param_keys = drupal_map_assoc(array(
-    'rft_id',
-    'svc.region',
-  ));
+                                  'rft_id',
+                                  'svc.region',
+                                ));
   $allowed_djatoka_params = array_intersect_key($decoded_params, $allowed_djatoka_param_keys);
   if (empty($allowed_djatoka_params)) {
     return FALSE;
@@ -103,7 +103,6 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
   );
 }
 
-
 /**
  * Get OpenSeadragon settings.
  *
@@ -111,31 +110,161 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
  *   Configuration options for OpenSeadragon.
  */
 function islandora_openseadragon_get_settings() {
-  return variable_get('islandora_openseadragon_settings', array()) + array(
-    'debugMode' => FALSE,
-    'djatokaServerBaseURL' => '/adore-djatoka/resolver',
-    'animationTime' => '1.5',
-    'blendTime' => '0.1',
-    'alwaysBlend' => FALSE,
-    'autoHideControls' => TRUE,
-    'immediateRender' => FALSE,
-    'wrapHorizontal' => FALSE,
-    'wrapVertical' => FALSE,
-    'wrapOverlays' => FALSE,
-    'panHorizontal' => TRUE,
-    'panVertical' => TRUE,
-    'minZoomImageRatio' => '0.8',
-    'maxZoomPixelRatio' => '2',
-    'visibilityRatio' => '0.5',
-    'springStiffness' => '5.0',
-    'imageLoaderLimit' => '5',
-    'clickTimeThreshold' => '300',
-    'clickDistThreshold' => '5',
-    'zoomPerClick' => '2.0',
-    'zoomPerScroll' => '1.2',
-    'zoomPerSecond' => '2.0',
-    'showNavigator' => TRUE,
-    'defaultZoomLevel' => '1.0',
+  return variable_get('islandora_openseadragon_settings', array()) + islandora_openseadraon_viewer_default_settings();
+}
+
+/**
+ * Gets the default settings for the OpenSeadragon viewer.
+ *
+ * @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options
+ *
+ * @return array
+ *   An associative array to pass to customize the behavior of OpenSeadragon.
+ */
+function islandora_openseadraon_viewer_default_settings() {
+  $library_path = libraries_get_path('openseadragon');
+  return array(
+    'id'=> 'islandora-openseadragon',
+    'element'=> NULL,
+    'tileSources'=> NULL,
+    'tabIndex'=> 0,
+    'overlays'=> NULL,
+    'prefixUrl'=> url("{$library_path}/images/", array('absolute' => TRUE)),
+    'navImages'=> NULL,
+    'debugMode'=> FALSE,
+    'debugGridColor'=> '#437AB2',
+    'blendTime'=> 0,
+    'alwaysBlend'=> False,
+    'autoHideControls'=> TRUE,
+    'immediateRender'=> FALSE,
+    'defaultZoomLevel'=> 0,
+    'opacity'=> 1,
+    'compositeOperation'=> NULL,
+    'placeholderFillStyle'=> NULL,
+    'degrees'=> 0,
+    'minZoomLevel'=> NULL,
+    'maxZoomLevel'=> NULL,
+    'homeFillsViewer'=> FALSE,
+    'panHorizontal'=> TRUE,
+    'panVertical'=> TRUE,
+    'constrainDuringPan'=> FALSE,
+    'wrapHorizontal'=> FALSE,
+    'wrapVertical'=> FALSE,
+    'minZoomImageRatio'=> 0.9,
+    'maxZoomPixelRatio'=> 1.1,
+    'smoothTileEdgesMinZoom'=> 1.1,
+    'iOSDevice'=> NULL,
+    'autoResize'=> TRUE,
+    'preserveImageSizeOnResize'=> FALSE,
+    'minScrollDeltaTime'=> 50,
+    'pixelsPerWheelLine'=> 40,
+    'visibilityRatio'=> 0.5,
+    'viewportMargins'=> NULL,
+    'imageLoaderLimit'=> 0,
+    'clickTimeThreshold'=> 300,
+    'clickDistThreshold'=> 5,
+    'dblClickTimeThreshold'=> 300,
+    'dblClickDistThreshold'=> 20,
+    'springStiffness'=> 6.5,
+    'animationTime'=> 1.2,
+    'gestureSettingsMouse' => array(
+      'scrollToZoom' => TRUE,
+      'clickToZoom' => TRUE,
+      'dblClickToZoom' => FALSE,
+      'pinchToZoom' => FALSE,
+      'flickEnabled' => FALSE,
+      'flickMinSpeed' => 120,
+      'flickMomentum' => 0.25,
+      'pinchRotate' => FALSE,
+    ),
+    'gestureSettingsTouch' => array(
+      'scrollToZoom' => FALSE,
+      'clickToZoom' => FALSE,
+      'dblClickToZoom' => TRUE,
+      'pinchToZoom' => TRUE,
+      'flickEnabled' => TRUE,
+      'flickMinSpeed' => 120,
+      'flickMomentum' => 0.25,
+      'pinchRotate' => FALSE,
+    ),
+    'gestureSettingsPen' => array(
+      'scrollToZoom' => FALSE,
+      'clickToZoom' => TRUE,
+      'dblClickToZoom' => FALSE,
+      'pinchToZoom' => FALSE,
+      'flickEnabled' => FALSE,
+      'flickMinSpeed' => 120,
+      'flickMomentum' => 0.25,
+      'pinchRotate' => FALSE,
+    ),
+    'gestureSettingsUnknown' => array(
+      'scrollToZoom' => TRUE,
+      'clickToZoom' => FALSE,
+      'dblClickToZoom' => TRUE,
+      'pinchToZoom' => TRUE,
+      'flickEnabled' => TRUE,
+      'flickMinSpeed' => 120,
+      'flickMomentum' => 0.25,
+      'pinchRotate' => FALSE,
+    ),
+    'zoomPerClick'=> 2.0,
+    'zoomPerScroll'=> 1.2,
+    'zoomPerSecond'=> 1.0,
+    'showNavigator'=> FALSE,
+    'navigatorId'=> NULL,
+    'navigatorPosition'=> 'TOP_RIGHT',
+    'navigatorSizeRatio'=> 0.2,
+    'navigatorMaintainSizeRatio'=> FALSE,
+    'navigatorTop'=> NULL,
+    'navigatorLeft'=> NULL,
+    'navigatorHeight'=> NULL,
+    'navigatorWidth'=> NULL,
+    'navigatorAutoResize'=> TRUE,
+    'navigatorAutoFade'=> TRUE,
+    'navigatorRotate'=> TRUE,
+    'controlsFadeDelay'=> 2000,
+    'controlsFadeLength'=> 1500,
+    'maxImageCacheCount'=> 200,
+    'timeout'=> 30000,
+    'useCanvas'=> TRUE,
+    'minPixelRatio'=> 0.5,
+    'mouseNavEnabled'=> TRUE,
+    'showNavigationControl'=> TRUE,
+    'navigationControlAnchor'=> 'TOP_LEFT',
+    'showZoomControl'=> TRUE,
+    'showHomeControl'=> TRUE,
+    'showFullPageControl'=> TRUE,
+    'showRotationControl'=> FALSE,
+    'showSequenceControl'=> TRUE,
+    'sequenceControlAnchor'=> 'TOP_LEFT',
+    'navPrevNextWrap'=> FALSE,
+    'zoomInButton'=> NULL,
+    'zoomOutButton'=> NULL,
+    'homeButton'=> NULL,
+    'fullPageButton'=> NULL,
+    'rotateLeftButton'=> NULL,
+    'rotateRightButton'=> NULL,
+    'previousButton'=> NULL,
+    'nextButton'=> NULL,
+    'sequenceMode'=> FALSE,
+    'initialPage'=> 0,
+    'preserveViewport'=> FALSE,
+    'preserveOverlays'=> FALSE,
+    'showReferenceStrip'=> FALSE,
+    'referenceStripScroll'=> 'horizontal',
+    'referenceStripElement'=> NULL,
+    'referenceStripHeight'=> NULL,
+    'referenceStripWidth'=> NULL,
+    'referenceStripPosition'=> 'BOTTOM_LEFT',
+    'referenceStripSizeRatio'=> 0.2,
+    'collectionMode'=> FALSE,
+    'collectionRows'=> 3,
+    'collectionColumns'=> 0,
+    'collectionLayout'=> 'horizontal',
+    'collectionTileSize'=> 800,
+    'collectionTileMargin'=> 80,
+    'crossOriginPolicy'=> FALSE,
+    'ajaxWithCredentials'=> FALSE,
   );
 }
 
@@ -168,11 +297,11 @@ function islandora_openseadragon_djatoka_tile_source(AbstractDatastream $datastr
   $token = islandora_get_object_token($pid, $dsid, 2);
   return array(
     'identifier' => url("islandora/object/{$pid}/datastream/{$dsid}/view", array(
-      'absolute' => TRUE,
-      'query' => array(
-        'token' => $token
-      ),
-    )),
+                    'absolute' => TRUE,
+                    'query' => array(
+                      'token' => $token
+                    ),
+                  )),
     'width' => NULL,
     'height' => NULL,
     'tileWidth' => 256, // @todo Get from Admin settings for Djatoka.
@@ -201,8 +330,8 @@ function islandora_openseadragon_viewer_query_solr_for_overlays($pid) {
 
   $params = $_GET['solr']['params'];
   $params['fq'][] = format_string('PID:"!pid"', array(
-    '!pid' => $pid,
-  ));
+                      '!pid' => $pid,
+                    ));
 
   module_load_include('inc', 'islandora_paged_content', 'includes/highlighting');
   $highlighting_info = islandora_paged_content_perform_solr_highlighting_query($_GET['solr']['query'], $params);

@@ -95,7 +95,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['tabIndex'],
           '#element_validate' => array('element_validate_number'),
           '#size' => 10,
-          '#description' => t('Tabbing order index to assign to the viewer element. Positive values are selected in increasing order. When tabIndex is 0 source order is used. A negative value omits the viewer from the tabbing order..'),
+          '#description' => t('Tabbing order index to assign to the viewer element. Positive values are selected in increasing order. When tabIndex is 0 source order is used. A negative value omits the viewer from the tabbing order.'),
         ),
         'debugMode' => array(
           '#type' => 'checkbox',
@@ -615,7 +615,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         // @todo navigatorId.
         'navigatorPosition' => array(
           '#type' => 'select',
-          '#title' => t('Composite Operation'),
+          '#title' => t('Navigator Position'),
           '#description' => t('If "ABSOLUTE" is specified, then navigator[Top|Left|Height|Width] determines the size and position of the navigator minimap in the viewer, and navigatorSizeRatio and navigatorMaintainSizeRatio are ignored. For "TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", and "BOTTOM_RIGHT", the navigatorSizeRatio or navigator[Height|Width] values determine the size of the navigator minimap.'),
           '#default_value' => $settings['navigatorPosition'],
           '#options' => drupal_map_assoc(array(
@@ -690,188 +690,321 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['navigatorAutoFade'],
           '#description' => t('If the user stops interacting with the viewport, fade the navigator minimap. Setting to false will make the navigator minimap always visible.'),
         ),
-        navigatorRotate
+        'navigatorRotate' => array(
+          '#type' => 'checkbox',
+          '#title' => t('Navigator Rotate'),
+          '#default_value' => $settings['navigatorRotate'],
+          '#description' => t('If true, the navigator will be rotated together with the viewer.'),
+        ),
+        'controlsFadeDelay' => array(
+          '#type' => 'textfield',
+          '#title' => t('Controls Fade Delay'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['controlsFadeDelay'],
+          '#description' => t('The number of milliseconds to wait once the user has stopped interacting with the interface before begining to fade the controls. Assumes showNavigationControl and autoHideControls are both true.'),
+        ),
+        'controlsFadeLength' => array(
+          '#type' => 'textfield',
+          '#title' => t('Controls Fade Length'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['controlsFadeLength'],
+          '#description' => t('The number of milliseconds to animate the controls fading out.'),
+        ),
+        'controlsFadeDelay' => array(
+          '#type' => 'textfield',
+          '#title' => t('Controls Fade Delay'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['controlsFadeDelay'],
+          '#description' => t('The number of milliseconds to wait once the user has stopped interacting with the interface before begining to fade the controls. Assumes showNavigationControl and autoHideControls are both true.'),
+        ),
+        'maxImageCacheCount' => array(
+          '#type' => 'textfield',
+          '#title' => t('Controls Fade Delay'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['maxImageCacheCount'],
+          '#description' => t('The max number of images we should keep in memory (per drawer).'),
+        ),
+        'timeout' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['timeout'],
+          '#description' => t(''),
+        ),
+        'useCanvas' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['useCanvas'],
+          '#description' => t('Set to false to not use an HTML canvas element for image rendering even if canvas is supported.'),
+        ),
+        'minPixelRatio' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
+          '#default_value' => $settings['timeout'],
+          '#description' => t('The higher the minPixelRatio, the lower the quality of the image that is considered sufficient to stop rendering a given zoom level. For example, if you are targeting mobile devices with less bandwith you may try setting this to 1.5 or higher.'),
+        ),
+        'mouseNavEnabled' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['mouseNavEnabled'],
+          '#description' => t('Is the user able to interact with the image via mouse or touch. Default interactions include draging the image in a plane, and zooming in toward and away from the image.'),
+        ),
+        'showNavigationControl' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showNavigationControl'],
+          '#description' => t('Set to false to prevent the appearance of the default navigation controls. Note that if set to false, the customs buttons set by the options zoomInButton, zoomOutButton etc, are rendered inactive.'),
+        ),
+        'navigationControlAnchor' => array(
+          '#type' => 'select',
+          '#title' => t('label'),
+          '#default_value' => $settings['navigationControlAnchor'],
+          '#description' => t('Placement of the default navigation controls. To set the placement of the sequence controls, see the sequenceControlAnchor option.'),
+          '#options' => drupal_map_assoc(array(
+                        'TOP_RIGHT',
+                        'TOP_LEFT',
+                        'BOTTOM_LEFT',
+                        'BOTTOM_RIGHT',
+                        'ABSOLUTE',
+                      )),
+        ),
+        'showZoomControl' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showZoomControl'],
+          '#description' => t('If true then + and - buttons to zoom in and out are displayed. Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
+        ),
+        'showHomeControl' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showHomeControl'],
+          '#description' => t('documentation'),
+        ),
+        'showFullPageControl' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showFullPageControl'],
+          '#description' => t('If true then the rotate left/right controls will be displayed as part of the standard controls. This is also subject to the browser support for rotate (e.g. viewer.drawer.canRotate()). Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
+        ),
+        'showRotationControl' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showRotationControl'],
+          '#description' => t('If sequenceMode is true, then provide buttons for navigating forward and backward through the images.'),
+        ),
+        'sequenceControlAnchor' => array(
+          '#type' => 'select',
+          '#title' => t('label'),
+          '#default_value' => $settings['sequenceControlAnchor'],
+          '#description' => t('Placement of the default sequence controls.'),
+          '#options' => drupal_map_assoc(array(
+                        'TOP_RIGHT',
+                        'TOP_LEFT',
+                        'BOTTOM_LEFT',
+                        'BOTTOM_RIGHT',
+                        'ABSOLUTE',
+                      )),
+        ),
+        'navPrevNextWrap' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['navPrevNextWrap'],
+          '#description' => t('If true then the "previous" button will wrap to the last image when viewing the first image and the "next" button will wrap to the first image when viewing the last image.'),
+        ),
+        'zoomInButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['zoomInButton'],
+          '#description' => t('Set the id of the custom "Zoom in" button to use. This is useful to have a custom button anywhere in the web page. To only change the button images, consider using OpenSeadragon.Options.navImages.'),
+        ),
+        'zoomOutButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['zoomOutButton'],
+          '#description' => t('Set the id of the custom "Zoom out" button to use. This is useful to have a custom button anywhere in the web page. To only change the button images, consider using OpenSeadragon.Options.navImages'),
+        ),
+        'homeButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['homeButton'],
+          '#description' => t(''),
+        ),
+        'fullPageButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['fullPageButton'],
+          '#description' => t(''),
+        ),
+        'rotateLeftButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['rotateLeftButton'],
+          '#description' => t(''),
+        ),
+        'rotateRightButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['rotateRightButton'],
+          '#description' => t(''),
+        ),
+        'previousButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['previousButton'],
+          '#description' => t(''),
+        ),
+        'nextButton' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['nextButton'],
+          '#description' => t(''),
+        ),
+        'sequenceMode' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['sequenceMode'],
+          '#description' => t(''),
+        ),
+        'initialPage' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['initialPage'],
+          '#description' => t(''),
+        ),
+        'preserveViewport' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['preserveViewport'],
+          '#description' => t(''),
+        ),
+        'preserveOverlays' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['preserveOverlays'],
+          '#description' => t(''),
+        ),
+        'showReferenceStrip' => array(
+          '#type' => 'checkbox',
+          '#title' => t('label'),
+          '#default_value' => $settings['showReferenceStrip'],
+          '#description' => t(''),
+        ),
+        'referenceStripScroll' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripScroll'],
+          '#description' => t(''),
+        ),
+        'referenceStripElement' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripElement'],
+          '#description' => t(''),
+        ),
+        'referenceStripHeight' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripHeight'],
+          '#description' => t(''),
+        ),
+        'referenceStripWidth' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripWidth'],
+          '#description' => t(''),
+        ),
+        'referenceStripPosition' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripPosition'],
+          '#description' => t(''),
+        ),
+        'referenceStripSizeRatio' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['referenceStripSizeRatio'],
+          '#description' => t(''),
+        ),
+        'collectionMode' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionMode'],
+          '#description' => t(''),
+        ),
+        'collectionRows' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionRows'],
+          '#description' => t(''),
+        ),
+        'collectionColumns' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionColumns'],
+          '#description' => t(''),
+        ),
+        'collectionLayout' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionLayout'],
+          '#description' => t(''),
+        ),
+        'collectionTileSize' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionTileSize'],
+          '#description' => t(''),
+        ),
+        'collectionTileMargin' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['collectionTileMargin'],
+          '#description' => t(''),
+        ),
+        'crossOriginPolicy' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['crossOriginPolicy'],
+          '#description' => t(''),
+        ),
+        'ajaxWithCredentials' => array(
+          '#type' => 'textfield',
+          '#title' => t('label'),
+          '#size' => 10,
+          '#default_value' => $settings['ajaxWithCredentials'],
+          '#description' => t(''),
+        ),
       )
     ),
-    /*
-    'islandora_openseadragon_settings' => array(
-      '#type' => 'container',
-      '#tree' => TRUE,
-      'debugMode' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Debug mode'),
-        '#default_value' => $settings['debugMode'],
-        '#description' => t('Toggles whether messages should be logged and fail-fast behavior should be provided.'),
-      ),
-      'djatokaServerBaseURL' => array(
-        '#type' => 'textfield',
-        '#title' => t('Djatoka server base URL'),
-        '#element_validate' => array('djatoka_base_url_validate'),
-        '#default_value' => $settings['djatokaServerBaseURL'],
-        '#description' => t('The location of the Djatoka server OpenURL resolver.'),
-      ),
-      'animationTime' => array(
-        '#type' => 'textfield',
-        '#title' => t('Animation time'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['animationTime'],
-        '#description' => t('The amount of time in seconds that animations should last.'),
-      ),
-
-      'wrapHorizontal' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Wrap horizontal'),
-        '#default_value' => $settings['wrapHorizontal'],
-        '#description' =>
-        t('Toggles whether tiles should be "wrapped" horizontally, so that there are no left or right edges.') . '<br />' .
-        '<strong>' . t('NOTE: this is an experimental API and is not guaranteed to work. The API is also very likely to change in the future. Use at your own risk!') . '</strong>',
-      ),
-      'wrapVertical' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Wrap vertical'),
-        '#default_value' => $settings['wrapVertical'],
-        '#description' =>
-        t('Toggles whether tiles should be "wrapped" vertically, so that there are no top or bottom edges.') . '<br />' .
-        '<strong>' . t('NOTE: this is an experimental API and is not guaranteed to work. The API is also very likely to change in the future. Use at your own risk!') . '</strong>',
-      ),
-      'wrapOverlays' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Wrap overlays'),
-        '#default_value' => $settings['wrapOverlays'],
-        '#description' =>
-        t('Toggles whether overlays should be continually repositioned to match any horizontal or vertical wrapping. This has no effect if neither Wrap Horizontal nor Wrap Vertical are set.') . '<br />' .
-        '<strong>' . t('NOTE: this is an experimental API and is not guaranteed to work. The API is also very likely to change in the future. Use at your own risk!') . '</strong>',
-      ),
-      'panHorizontal' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Pan horizontal'),
-        '#default_value' => $settings['panHorizontal'],
-        '#description' => t('Toggles whether images can be moved along the horizontal axis of the viewer.'),
-      ),
-      'panVertical' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Pan vertical'),
-        '#default_value' => $settings['panVertical'],
-        '#description' => t('Toggles whether images can be moved along the vertical axis of the viewer.'),
-      ),
-      'showNavigator' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Show Navigator'),
-        '#default_value' => $settings['showNavigator'],
-        '#description' => t('Toggles whether image navigator is displayed.'),
-      ),
-      'minZoomImageRatio' => array(
-        '#type' => 'textfield',
-        '#title' => t('Minimum zoom image ratio'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['minZoomImageRatio'],
-        '#description' => t('The minimum image ratio (image size to viewer size) in both dimensions that can result from zooming out.'),
-      ),
-      'maxZoomPixelRatio' => array(
-        '#type' => 'textfield',
-        '#title' => t('Maximum zoom pixel ratio'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['maxZoomPixelRatio'],
-        '#description' => t('The maximum pixel ratio (screen pixels to image file pixels) that can result from zooming in.'),
-      ),
-      'visibilityRatio' => array(
-        '#type' => 'textfield',
-        '#title' => t('Visibility ratio'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['visibilityRatio'],
-        '#description' => t('The minimum portion of the viewport that must show visible content in both dimensions.'),
-      ),
-      'springStiffness' => array(
-        '#type' => 'textfield',
-        '#title' => t('Spring stiffness'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['springStiffness'],
-        '#description' => t('Determines how sharply the springs used for animations move.'),
-      ),
-      'imageLoaderLimit' => array(
-        '#type' => 'textfield',
-        '#title' => t('Image loader limit'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['imageLoaderLimit'],
-        '#description' => t('The maximum number of concurrent image downloads that can be performed by each viewer.'),
-      ),
-      'clickTimeThreshold' => array(
-        '#type' => 'textfield',
-        '#title' => t('Click time threshold'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['clickTimeThreshold'],
-        '#description' => t('The maximum number of milliseconds that can pass between a mousedown and a mouseup for the action to still be considered a "quick" click.'),
-      ),
-      'clickDistThreshold' => array(
-        '#type' => 'textfield',
-        '#title' => t('Click distance threshold'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['clickDistThreshold'],
-        '#description' => t('The maximum number of pixels the mouse can move between a mousedown and a mouseup for the action to still be considered a "quick" click.'),
-      ),
-      'zoomPerClick' => array(
-        '#type' => 'textfield',
-        '#title' => t('Zoom per click'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['zoomPerClick'],
-        '#description' => t('The factor by which images should zoom when clicked on.'),
-      ),
-      'zoomPerScroll' => array(
-        '#type' => 'textfield',
-        '#title' => t('Zoom per scroll'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['zoomPerScroll'],
-        '#description' => t('The factor by which images should zoom when scrolled over.'),
-      ),
-      'zoomPerSecond' => array(
-        '#type' => 'textfield',
-        '#title' => t('Zoom per second'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['zoomPerSecond'],
-        '#description' => t('The factor by which images should zoom every second when the zoom buttons are held down.'),
-      ),
-      'defaultZoomLevel' => array(
-        '#type' => 'textfield',
-        '#title' => t('Default zoom level'),
-        '#size' => 10,
-        '#element_validate' => array('element_validate_number'),
-        '#default_value' => $settings['defaultZoomLevel'],
-        '#description' => t('The zoom level used by default for loaded OpenSeadragon viewers.'),
-      ),
-    ),
-    'islandora_openseadragon_tile_size' => array(
-      '#type' => 'textfield',
-      '#title' => t('Tile size'),
-      '#size' => 10,
-      '#element_validate' => array('element_validate_integer'),
-      '#default_value' => variable_get('islandora_openseadragon_tile_size', '256'),
-      '#description' => t('The size of image tiles used to compose the image as a whole, in pixels.'),
-    ),
-    'islandora_openseadragon_tile_overlap' => array(
-      '#type' => 'textfield',
-      '#title' => t('Tile overlap'),
-      '#size' => 10,
-      '#element_validate' => array('element_validate_integer'),
-      '#default_value' => variable_get('islandora_openseadragon_tile_overlap', '0'),
-      '#description' => t('The number of pixels by which each tile will overlap adjacent ones.'),
-    ),
-    'islandora_openseadragon_fit_to_aspect_ratio' => array(
-      '#type' => 'checkbox',
-      '#title' => t('Constrain image to viewport'),
-      '#default_value' => variable_get('islandora_openseadragon_fit_to_aspect_ratio', FALSE),
-    ),
-    */
     'actions' => array(
       '#type' => 'actions',
       'reset' => array(
@@ -1025,735 +1158,6 @@ function islandora_openseadragon_admin_submit(array $form, array &$form_state) {
       variable_del('islandora_openseadragon_settings');
       variable_del('islandora_openseadragon_tile_size');
       variable_del('islandora_openseadragon_tile_overlap');
-      break;
+     break;
   }
 }
-
-/**
-name: id
-type: String
-attributes:
-default:
-description: Id of the element to append the viewer's container element to. If not provided, the 'element' property must be provided. If both the element and id properties are specified, the viewer is appended to the element provided in the element property.
-name: element
-type: Element
-attributes:
-default:
-description: The element to append the viewer's container element to. If not provided, the 'id' property must be provided. If both the element and id properties are specified, the viewer is appended to the element provided in the element property.
-name: tileSources
-type: Array | String | function | Object
-attributes:<optional>
-default: null
-description: Tile source(s) to open initially. This is a complex parameter; see OpenSeadragon.Viewer#open for details.
-name: tabIndex
-type: Number
-attributes:<optional>
-default: 0
-description: Tabbing order index to assign to the viewer element. Positive values are selected in increasing order. When tabIndex is 0 source order is used. A negative value omits the viewer from the tabbing order.
-name: overlays
-type: Array
-attributes:
-default:
-description: Array of objects defining permanent overlays of the viewer. The overlays added via this option and later removed with OpenSeadragon.Viewer#removeOverlay will be added back when a new image is opened. To add overlays which can be definitively removed, one must use OpenSeadragon.Viewer#addOverlay If displaying a sequence of images, the overlays can be associated with a specific page by passing the overlays array to the page's tile source configuration. Expected properties: * x, y, (or px, py for pixel coordinates) to define the location. * width, height in point if using x,y or in pixels if using px,py. If width and height are specified, the overlay size is adjusted when zooming, otherwise the size stays the size of the content (or the size defined by CSS). * className to associate a class to the overlay * id to set the overlay element. If an element with this id already exists, it is reused, otherwise it is created. If not specified, a new element is created. * placement a string to define the relative position to the viewport. Only used if no width and height are specified. Default: 'TOP_LEFT'. See OpenSeadragon.Placement for possible values.
-name: xmlPath
-type: String
-attributes:<optional>
-default: null
-description: DEPRECATED. A relative path to load a DZI file from the server. Prefer the newer Options.tileSources.
-name: prefixUrl
-type: String
-attributes:<optional>
-default: '/images/'
-description: Prepends the prefixUrl to navImages paths, which is very useful since the default paths are rarely useful for production environments.
-name: navImages
-type: OpenSeadragon.NavImages
-attributes:<optional>
-default:
-description: An object with a property for each button or other built-in navigation control, eg the current 'zoomIn', 'zoomOut', 'home', and 'fullpage'. Each of those in turn provides an image path for each state of the button or navigation control, eg 'REST', 'GROUP', 'HOVER', 'PRESS'. Finally the image paths, by default assume there is a folder on the servers root path called '/images', eg '/images/zoomin_rest.png'. If you need to adjust these paths, prefer setting the option.prefixUrl rather than overriding every image path directly through this setting.
-name: debugMode
-type: Boolean
-attributes:<optional>
-default: false
-description: TODO: provide an in-screen panel providing event detail feedback.
-name: debugGridColor
-type: String
-attributes:<optional>
-default: '#437AB2'
-description:
-name: blendTime
-type: Number
-attributes:<optional>
-default: 0
-description: Specifies the duration of animation as higher or lower level tiles are replacing the existing tile.
-name: alwaysBlend
-type: Boolean
-attributes:<optional>
-default: false
-description: Forces the tile to always blend. By default the tiles skip blending when the blendTime is surpassed and the current animation frame would not complete the blend.
-name: autoHideControls
-type: Boolean
-attributes:<optional>
-default: true
-description: If the user stops interacting with the viewport, fade the navigation controls. Useful for presentation since the controls are by default floated on top of the image the user is viewing.
-name: immediateRender
-type: Boolean
-attributes:<optional>
-default: false
-description: Render the best closest level first, ignoring the lowering levels which provide the effect of very blurry to sharp. It is recommended to change setting to true for mobile devices.
-name: defaultZoomLevel
-type: Number
-attributes:<optional>
-default: 0
-description: Zoom level to use when image is first opened or the home button is clicked. If 0, adjusts to fit viewer.
-name: opacity
-type: Number
-attributes:<optional>
-default: 1
-description: Default opacity of the tiled images (1=opaque, 0=transparent)
-name: compositeOperation
-type: String
-attributes:<optional>
-default: null
-description: Valid values are 'source-over', 'source-atop', 'source-in', 'source-out', 'destination-over', 'destination-atop', 'destination-in', 'destination-out', 'lighter', 'copy' or 'xor'
-name: placeholderFillStyle
-type: String | CanvasGradient | CanvasPattern | function
-attributes:<optional>
-default: null
-description: Draws a colored rectangle behind the tile if it is not loaded yet. You can pass a CSS color value like "#FF8800". When passing a function the tiledImage and canvas context are available as argument which is useful when you draw a gradient or pattern.
-name: degrees
-type: Number
-attributes:<optional>
-default: 0
-description: Initial rotation.
-name: minZoomLevel
-type: Number
-attributes:<optional>
-default: null
-description:
-name: maxZoomLevel
-type: Number
-attributes:<optional>
-default: null
-description:
-name: homeFillsViewer
-type: Boolean
-attributes:<optional>
-default: false
-description: Make the 'home' button fill the viewer and clip the image, instead of fitting the image to the viewer and letterboxing.
-name: panHorizontal
-type: Boolean
-attributes:<optional>
-default: true
-description: Allow horizontal pan.
-name: panVertical
-type: Boolean
-attributes:<optional>
-default: true
-description: Allow vertical pan.
-name: constrainDuringPan
-type: Boolean
-attributes:<optional>
-default: false
-description:
-name: wrapHorizontal
-type: Boolean
-attributes:<optional>
-default: false
-description: Set to true to force the image to wrap horizontally within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.
-name: wrapVertical
-type: Boolean
-attributes:<optional>
-default: false
-description: Set to true to force the image to wrap vertically within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.
-name: minZoomImageRatio
-type: Number
-attributes:<optional>
-default: 0.9
-description: The minimum percentage ( expressed as a number between 0 and 1 ) of the viewport height or width at which the zoom out will be constrained. Setting it to 0, for example will allow you to zoom out infinity.
-name: maxZoomPixelRatio
-type: Number
-attributes:<optional>
-default: 1.1
-description: The maximum ratio to allow a zoom-in to affect the highest level pixel ratio. This can be set to Infinity to allow 'infinite' zooming into the image though it is less effective visually if the HTML5 Canvas is not availble on the viewing device.
-name: smoothTileEdgesMinZoom
-type: Number
-attributes:<optional>
-default: 1.1
-description: A zoom percentage ( where 1 is 100% ) of the highest resolution level. When zoomed in beyond this value alternative compositing will be used to smooth out the edges between tiles. This will have a performance impact. Can be set to Infinity to turn it off. Note: This setting is ignored on iOS devices due to a known bug (See https://github.com/openseadragon/openseadragon/issues/952)
-name: iOSDevice
-type: Boolean
-attributes:<optional>
-default: ?
-description: True if running on an iOS device, false otherwise. Used to disable certain features that behave differently on iOS devices.
-name: autoResize
-type: Boolean
-attributes:<optional>
-default: true
-description: Set to false to prevent polling for viewer size changes. Useful for providing custom resize behavior.
-name: preserveImageSizeOnResize
-type: Boolean
-attributes:<optional>
-default: false
-description: Set to true to have the image size preserved when the viewer is resized. This requires autoResize=true (default).
-name: minScrollDeltaTime
-type: Number
-attributes:<optional>
-default: 50
-description: Number of milliseconds between canvas-scroll events. This value helps normalize the rate of canvas-scroll events between different devices, causing the faster devices to slow down enough to make the zoom control more manageable.
-name: pixelsPerWheelLine
-type: Number
-attributes:<optional>
-default: 40
-description: For pixel-resolution scrolling devices, the number of pixels equal to one scroll line.
-name: visibilityRatio
-type: Number
-attributes:<optional>
-default: 0.5
-description: The percentage ( as a number from 0 to 1 ) of the source image which must be kept within the viewport. If the image is dragged beyond that limit, it will 'bounce' back until the minimum visibility ratio is achieved. Setting this to 0 and wrapHorizontal ( or wrapVertical ) to true will provide the effect of an infinitely scrolling viewport.
-name: viewportMargins
-type: Object
-attributes:<optional>
-default: {}
-description: Pushes the "home" region in from the sides by the specified amounts. Possible subproperties (Numbers, in screen coordinates): left, top, right, bottom.
-name: imageLoaderLimit
-type: Number
-attributes:<optional>
-default: 0
-description: The maximum number of image requests to make concurrently. By default it is set to 0 allowing the browser to make the maximum number of image requests in parallel as allowed by the browsers policy.
-name: clickTimeThreshold
-type: Number
-attributes:<optional>
-default: 300
-description: The number of milliseconds within which a pointer down-up event combination will be treated as a click gesture.
-name: clickDistThreshold
-type: Number
-attributes:<optional>
-default: 5
-description: The maximum distance allowed between a pointer down event and a pointer up event to be treated as a click gesture.
-name: dblClickTimeThreshold
-type: Number
-attributes:<optional>
-default: 300
-description: The number of milliseconds within which two pointer down-up event combinations will be treated as a double-click gesture.
-name: dblClickDistThreshold
-type: Number
-attributes:<optional>
-default: 20
-description: The maximum distance allowed between two pointer click events to be treated as a double-click gesture.
-name: springStiffness
-type: Number
-attributes:<optional>
-default: 6.5
-description:
-name: animationTime
-type: Number
-attributes:<optional>
-default: 1.2
-description: Specifies the animation duration per each OpenSeadragon.Spring which occur when the image is dragged or zoomed.
-name: gestureSettingsMouse
-type: OpenSeadragon.GestureSettings
-attributes:<optional>
-default: Settings for gestures generated by a mouse pointer device. (See OpenSeadragon.GestureSettings)
-description: Properties
-
-name: Name
-type: Type
-attributes:Attributes
-default: Default
-description: Description
-name: scrollToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on scroll gesture
-name: clickToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on click gesture
-name: dblClickToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on double-click gesture. Note: If set to true then clickToZoom should be set to false to prevent multiple zooms.
-name: pinchToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on pinch gesture
-name: flickEnabled
-type: Boolean
-attributes:<optional>
-default: false
-description: Enable flick gesture
-name: flickMinSpeed
-type: Number
-attributes:<optional>
-default: 120
-description: If flickEnabled is true, the minimum speed to initiate a flick gesture (pixels-per-second)
-name: flickMomentum
-type: Number
-attributes:<optional>
-default: 0.25
-description: If flickEnabled is true, the momentum factor for the flick gesture
-name: pinchRotate
-type: Boolean
-attributes:<optional>
-default: false
-description: If pinchRotate is true, the user will have the ability to rotate the image using their fingers.
-name: gestureSettingsTouch
-type: OpenSeadragon.GestureSettings
-attributes:<optional>
-default: Settings for gestures generated by a touch pointer device. (See OpenSeadragon.GestureSettings)
-description: Properties
-name: Name
-type: Type
-attributes:Attributes
-default: Default
-description: Description
-name: scrollToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on scroll gesture
-name: clickToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on click gesture
-name: dblClickToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on double-click gesture. Note: If set to true then clickToZoom should be set to false to prevent multiple zooms.
-name: pinchToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on pinch gesture
-name: flickEnabled
-type: Boolean
-attributes:<optional>
-default: true
-description: Enable flick gesture
-name: flickMinSpeed
-type: Number
-attributes:<optional>
-default: 120
-description: If flickEnabled is true, the minimum speed to initiate a flick gesture (pixels-per-second)
-name: flickMomentum
-type: Number
-attributes:<optional>
-default: 0.25
-description: If flickEnabled is true, the momentum factor for the flick gesture
-name: pinchRotate
-type: Boolean
-attributes:<optional>
-default: false
-description: If pinchRotate is true, the user will have the ability to rotate the image using their fingers.
-name: gestureSettingsPen
-type: OpenSeadragon.GestureSettings
-attributes:<optional>
-default: Settings for gestures generated by a pen pointer device. (See OpenSeadragon.GestureSettings)
-description: Properties
-name: Name
-type: Type
-attributes:Attributes
-default: Default
-description: Description
-name: scrollToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on scroll gesture
-name: clickToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on click gesture
-name: dblClickToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on double-click gesture. Note: If set to true then clickToZoom should be set to false to prevent multiple zooms.
-name: pinchToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on pinch gesture
-name: flickEnabled
-type: Boolean
-attributes:<optional>
-default: false
-description: Enable flick gesture
-name: flickMinSpeed
-type: Number
-attributes:<optional>
-default: 120
-description: If flickEnabled is true, the minimum speed to initiate a flick gesture (pixels-per-second)
-name: flickMomentum
-type: Number
-attributes:<optional>
-default: 0.25
-description: If flickEnabled is true, the momentum factor for the flick gesture
-name: pinchRotate
-type: Boolean
-attributes:<optional>
-default: false
-description: If pinchRotate is true, the user will have the ability to rotate the image using their fingers.
-name: gestureSettingsUnknown
-type: OpenSeadragon.GestureSettings
-attributes:<optional>
-default: Settings for gestures generated by unknown pointer devices. (See OpenSeadragon.GestureSettings)
-description: Properties
-name: Name
-type: Type
-attributes:Attributes
-default: Default
-description: Description
-name: scrollToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on scroll gesture
-name: clickToZoom
-type: Boolean
-attributes:<optional>
-default: false
-description: Zoom on click gesture
-name: dblClickToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on double-click gesture. Note: If set to true then clickToZoom should be set to false to prevent multiple zooms.
-name: pinchToZoom
-type: Boolean
-attributes:<optional>
-default: true
-description: Zoom on pinch gesture
-name: flickEnabled
-type: Boolean
-attributes:<optional>
-default: true
-description: Enable flick gesture
-name: flickMinSpeed
-type: Number
-attributes:<optional>
-default: 120
-description: If flickEnabled is true, the minimum speed to initiate a flick gesture (pixels-per-second)
-name: flickMomentum
-type: Number
-attributes:<optional>
-default: 0.25
-description: If flickEnabled is true, the momentum factor for the flick gesture
-name: pinchRotate
-type: Boolean
-attributes:<optional>
-default: false
-description: If pinchRotate is true, the user will have the ability to rotate the image using their fingers.
-name: zoomPerClick
-type: Number
-attributes:<optional>
-default: 2.0
-description: The "zoom distance" per mouse click or touch tap. Note: Setting this to 1.0 effectively disables the click-to-zoom feature (also see gestureSettings[Mouse|Touch|Pen].clickToZoom/dblClickToZoom).
-name: zoomPerScroll
-type: Number
-attributes:<optional>
-default: 1.2
-description: The "zoom distance" per mouse scroll or touch pinch. Note: Setting this to 1.0 effectively disables the mouse-wheel zoom feature (also see gestureSettings[Mouse|Touch|Pen].scrollToZoom}).
-name: zoomPerSecond
-type: Number
-attributes:<optional>
-default: 1.0
-description: The number of seconds to animate a single zoom event over.
-name: showNavigator
-type: Boolean
-attributes:<optional>
-default: false
-description: Set to true to make the navigator minimap appear.
-name: navigatorId
-type: String
-attributes:<optional>
-default: navigator-GENERATED DATE
-description: The ID of a div to hold the navigator minimap. If an ID is specified, the navigatorPosition, navigatorSizeRatio, navigatorMaintainSizeRatio, navigator[Top|Left|Height|Width] and navigatorAutoFade options will be ignored. If an ID is not specified, a div element will be generated and placed on top of the main image.
-name: navigatorPosition
-type: String
-attributes:<optional>
-default: 'TOP_RIGHT'
-description: Valid values are 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', 'BOTTOM_RIGHT', or 'ABSOLUTE'.
-name: If 'ABSOLUTE' is specified, then navigator[Top|Left|Height|Width] determines the size and position of the navigator minimap in the viewer, and navigatorSizeRatio and navigatorMaintainSizeRatio are ignored.
-type: For 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', and 'BOTTOM_RIGHT', the navigatorSizeRatio or navigator[Height|Width] values determine the size of the navigator minimap.
-attributes:navigatorSizeRatio
-default: Number
-description: <optional>
-name: 0.2
-type: Ratio of navigator size to viewer size. Ignored if navigator[Height|Width] are specified.
-attributes:navigatorMaintainSizeRatio
-default: Boolean
-description: <optional>
-name: false
-type: If true, the navigator minimap is resized (using navigatorSizeRatio) when the viewer size changes.
-attributes:navigatorTop
-default: Number | String
-description: <optional>
-name: null
-type: Specifies the location of the navigator minimap (see navigatorPosition).
-attributes:navigatorLeft
-default: Number | String
-description: <optional>
-name: null
-type: Specifies the location of the navigator minimap (see navigatorPosition).
-attributes:navigatorHeight
-default: Number | String
-description: <optional>
-name: null
-type: Specifies the size of the navigator minimap (see navigatorPosition). If specified, navigatorSizeRatio and navigatorMaintainSizeRatio are ignored.
-attributes:navigatorWidth
-default: Number | String
-description: <optional>
-name: null
-type: Specifies the size of the navigator minimap (see navigatorPosition). If specified, navigatorSizeRatio and navigatorMaintainSizeRatio are ignored.
-attributes:navigatorAutoResize
-default: Boolean
-description: <optional>
-name: true
-type: Set to false to prevent polling for navigator size changes. Useful for providing custom resize behavior. Setting to false can also improve performance when the navigator is configured to a fixed size.
-attributes:navigatorAutoFade
-default: Boolean
-description: <optional>
-name: true
-type: If the user stops interacting with the viewport, fade the navigator minimap. Setting to false will make the navigator minimap always visible.
-attributes:navigatorRotate
-default: Boolean
-description: <optional>
-name: true
-type: If true, the navigator will be rotated together with the viewer.
-attributes:controlsFadeDelay
-default: Number
-description: <optional>
-name: 2000
-type: The number of milliseconds to wait once the user has stopped interacting with the interface before begining to fade the controls. Assumes showNavigationControl and autoHideControls are both true.
-attributes:controlsFadeLength
-default: Number
-description: <optional>
-name: 1500
-type: The number of milliseconds to animate the controls fading out.
-attributes:maxImageCacheCount
-default: Number
-description: <optional>
-name: 200
-type: The max number of images we should keep in memory (per drawer).
-attributes:timeout
-default: Number
-description: <optional>
-name: 30000
-type:
-attributes:useCanvas
-default: Boolean
-description: <optional>
-name: true
-type: Set to false to not use an HTML canvas element for image rendering even if canvas is supported.
-attributes:minPixelRatio
-default: Number
-description: <optional>
-name: 0.5
-type: The higher the minPixelRatio, the lower the quality of the image that is considered sufficient to stop rendering a given zoom level. For example, if you are targeting mobile devices with less bandwith you may try setting this to 1.5 or higher.
-attributes:mouseNavEnabled
-default: Boolean
-description: <optional>
-name: true
-type: Is the user able to interact with the image via mouse or touch. Default interactions include draging the image in a plane, and zooming in toward and away from the image.
-attributes:showNavigationControl
-default: Boolean
-description: <optional>
-name: true
-type: Set to false to prevent the appearance of the default navigation controls.
-attributes:Note that if set to false, the customs buttons set by the options zoomInButton, zoomOutButton etc, are rendered inactive.
-default: navigationControlAnchor
-description: OpenSeadragon.ControlAnchor
-name: <optional>
-type: TOP_LEFT
-attributes:Placement of the default navigation controls. To set the placement of the sequence controls, see the sequenceControlAnchor option.
-default: showZoomControl
-description: Boolean
-name: <optional>
-type: true
-attributes:If true then + and - buttons to zoom in and out are displayed.
-default: Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.
-description: showHomeControl
-name: Boolean
-type: <optional>
-attributes:true
-default: If true then the 'Go home' button is displayed to go back to the original zoom and pan.
-description: Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.
-name: showFullPageControl
-type: Boolean
-attributes:<optional>
-default: true
-description: If true then the 'Toggle full page' button is displayed to switch between full page and normal mode.
-name: Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.
-type: showRotationControl
-attributes:Boolean
-default: <optional>
-description: false
-name: If true then the rotate left/right controls will be displayed as part of the standard controls. This is also subject to the browser support for rotate (e.g. viewer.drawer.canRotate()).
-type: Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.
-attributes:showSequenceControl
-default: Boolean
-description: <optional>
-name: true
-type: If sequenceMode is true, then provide buttons for navigating forward and backward through the images.
-attributes:sequenceControlAnchor
-default: OpenSeadragon.ControlAnchor
-description: <optional>
-name: TOP_LEFT
-type: Placement of the default sequence controls.
-attributes:navPrevNextWrap
-default: Boolean
-description: <optional>
-name: false
-type: If true then the 'previous' button will wrap to the last image when viewing the first image and the 'next' button will wrap to the first image when viewing the last image.
-attributes:zoomInButton
-default: String
-description:
-name:
-type: Set the id of the custom 'Zoom in' button to use. This is useful to have a custom button anywhere in the web page.
-attributes:To only change the button images, consider using OpenSeadragon.Options.navImages
-default: zoomOutButton
-description: String
-name:
-type:
-attributes:Set the id of the custom 'Zoom out' button to use. This is useful to have a custom button anywhere in the web page.
-default: To only change the button images, consider using OpenSeadragon.Options.navImages
-description: homeButton
-name: String
-type:
-attributes:
-default: Set the id of the custom 'Go home' button to use. This is useful to have a custom button anywhere in the web page.
-description: To only change the button images, consider using OpenSeadragon.Options.navImages
-name: fullPageButton
-type: String
-attributes:
-default:
-description: Set the id of the custom 'Toggle full page' button to use. This is useful to have a custom button anywhere in the web page.
-name: To only change the button images, consider using OpenSeadragon.Options.navImages
-type: rotateLeftButton
-attributes:String
-default:
-description:
-name: Set the id of the custom 'Rotate left' button to use. This is useful to have a custom button anywhere in the web page.
-type: To only change the button images, consider using OpenSeadragon.Options.navImages
-attributes:rotateRightButton
-default: String
-description:
-name:
-type: Set the id of the custom 'Rotate right' button to use. This is useful to have a custom button anywhere in the web page.
-attributes:To only change the button images, consider using OpenSeadragon.Options.navImages
-default: previousButton
-description: String
-
-
-Set the id of the custom 'Previous page' button to use. This is useful to have a custom button anywhere in the web page.
-To only change the button images, consider using OpenSeadragon.Options.navImages
-nextButton
-String
-
-
-Set the id of the custom 'Next page' button to use. This is useful to have a custom button anywhere in the web page.
-To only change the button images, consider using OpenSeadragon.Options.navImages
-sequenceMode
-Boolean
-<optional>
-false
-Set to true to have the viewer treat your tilesources as a sequence of images to be opened one at a time rather than all at once.
-initialPage
-Number
-<optional>
-0
-If sequenceMode is true, display this page initially.
-preserveViewport
-Boolean
-<optional>
-false
-If sequenceMode is true, then normally navigating through each image resets the viewport to 'home' position. If preserveViewport is set to true, then the viewport position is preserved when navigating between images in the sequence.
-preserveOverlays
-Boolean
-<optional>
-false
-If sequenceMode is true, then normally navigating through each image resets the overlays. If preserveOverlays is set to true, then the overlays added with OpenSeadragon.Viewer#addOverlay are preserved when navigating between images in the sequence. Note: setting preserveOverlays overrides any overlays specified in the global "overlays" option for the Viewer. It's also not compatible with specifying per-tileSource overlays via the options, as those overlays will persist even after the tileSource is closed.
-showReferenceStrip
-Boolean
-<optional>
-false
-If sequenceMode is true, then display a scrolling strip of image thumbnails for navigating through the images.
-referenceStripScroll
-String
-<optional>
-'horizontal'
-
-referenceStripElement
-Element
-<optional>
-null
-
-referenceStripHeight
-Number
-<optional>
-null
-
-referenceStripWidth
-Number
-<optional>
-null
-
-referenceStripPosition
-String
-<optional>
-'BOTTOM_LEFT'
-
-referenceStripSizeRatio
-Number
-<optional>
-0.2
-
-collectionMode
-Boolean
-<optional>
-false
-Set to true to have the viewer arrange your TiledImages in a grid or line.
-collectionRows
-Number
-<optional>
-3
-If collectionMode is true, specifies how many rows the grid should have. Use 1 to make a line. If collectionLayout is 'vertical', specifies how many columns instead.
-collectionColumns
-Number
-<optional>
-0
-If collectionMode is true, specifies how many columns the grid should have. Use 1 to make a line. If collectionLayout is 'vertical', specifies how many rows instead. Ignored if collectionRows is not set to a falsy value.
-collectionLayout
-String
-<optional>
-'horizontal'
-If collectionMode is true, specifies whether to arrange vertically or horizontally.
-collectionTileSize
-Number
-<optional>
-800
-If collectionMode is true, specifies the size, in viewport coordinates, for each TiledImage to fit into. The TiledImage will be centered within a square of the specified size.
-collectionTileMargin
-Number
-<optional>
-80
-If collectionMode is true, specifies the margin, in viewport coordinates, between each TiledImage.
-crossOriginPolicy
-String | Boolean
-<optional>
-false
-Valid values are 'Anonymous', 'use-credentials', and false. If false, canvas requests will not use CORS, and the canvas will be tainted.
-ajaxWithCredentials
-Boolean
-<optional>
-false
-Whether to set the withCredentials XHR flag for AJAX requests (when loading tile sources). Note that this can be overridden at the OpenSeadragon.TileSource level.
- */
