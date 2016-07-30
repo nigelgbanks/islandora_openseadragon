@@ -89,6 +89,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
       'islandora_openseadragon_settings' => array(
         '#type' => 'container',
         '#tree' => TRUE,
+        // We don't provide "id" as configurable to administrators.
+        // We don't provide "element" as configurable to administrators.
+        // We don't provide "tileSources" as configurable to administrators.
         'tabIndex' => array(
           '#type' => 'textfield',
           '#title' => t('Tab Index'),
@@ -106,7 +109,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         'debugGridColor' => array(
           '#type' => 'textfield',
           '#title' => t('Debug Grid Color'),
-          '#default_value' => $settings['debugMode'],
+          '#default_value' => $settings['debugGridColor'],
           '#description' => t('Color of the grid in debug mode.'),
         ),
         'blendTime' => array(
@@ -121,7 +124,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#type' => 'checkbox',
           '#title' => t('Always blend'),
           '#default_value' => $settings['alwaysBlend'],
-          '#description' => t("Forces the tile to always blend. By default the tiles skip blending when the blendTime is surpassed and the current animation frame would not complete the blend.."),
+          '#description' => t("Forces the tile to always blend. By default the tiles skip blending when the blendTime is surpassed and the current animation frame would not complete the blend."),
         ),
         'autoHideControls' => array(
           '#type' => 'checkbox',
@@ -144,10 +147,12 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#description' => t('Zoom level to use when image is first opened or the home button is clicked. If 0, adjusts to fit viewer.'),
         ),
         'opacity' => array(
-          '#type' => 'checkbox',
+          '#type' => 'textfield',
           '#title' => t('Opacity'),
+          '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['opacity'],
-          '#description' => t('Default opacity of the tiled images (checked=opaque, unchecked=transparent)'),
+          '#description' => t('Default opacity of the tiled images (1=opaque, 0=transparent)'),
         ),
         'compositeOperation' => array(
           '#type' => 'select',
@@ -169,7 +174,12 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             'xor'
           )),
         ),
-        // @todo placeholderFillStyle.
+        'placeholderFillStyle' => array(
+          '#type' => 'textfield',
+          '#title' => t('Placeholder Fill Style'),
+          '#default_value' => $settings['placeholderFillStyle'],
+          '#description' => t('Draws a colored rectangle behind the tile if it is not loaded yet. You can pass a CSS color value like "#FF8800".'),
+        ),
         'degrees' => array(
           '#type' => 'textfield',
           '#title' => t('Initial Rotation'),
@@ -204,13 +214,13 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#type' => 'checkbox',
           '#title' => t('Pan horizontal'),
           '#default_value' => $settings['panHorizontal'],
-          '#description' => t('Toggles whether images can be moved along the horizontal axis of the viewer.'),
+          '#description' => t('Allow horizontal pan.'),
         ),
         'panVertical' => array(
           '#type' => 'checkbox',
           '#title' => t('Pan vertical'),
           '#default_value' => $settings['panVertical'],
-          '#description' => t('Toggles whether images can be moved along the vertical axis of the viewer.'),
+          '#description' => t('Allow vertical pan.'),
         ),
         'constrainDuringPan' => array(
           '#type' => 'checkbox',
@@ -221,13 +231,13 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#type' => 'checkbox',
           '#title' => t('Wrap horizontal'),
           '#default_value' => $settings['wrapHorizontal'],
-          '#description' => t('Toggle to force the image to wrap horizontally within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.'),
+          '#description' => t('Set to true to force the image to wrap horizontally within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.'),
         ),
         'wrapVertical' => array(
           '#type' => 'checkbox',
           '#title' => t('Wrap vertical'),
           '#default_value' => $settings['wrapVertical'],
-          '#description' => t('Toggle to force the image to wrap vertically within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.'),
+          '#description' => t('Set to true to force the image to wrap vertically within the viewport. Useful for maps or images representing the surface of a sphere or cylinder.'),
         ),
         'minZoomImageRatio' => array(
           '#type' => 'textfield',
@@ -253,7 +263,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['smoothTileEdgesMinZoom'],
           '#description' => t('A zoom percentage ( where 1 is 100% ) of the highest resolution level. When zoomed in beyond this value alternative compositing will be used to smooth out the edges between tiles. This will have a performance impact. Can be set to Infinity to turn it off. Note: This setting is ignored on iOS devices due to a known bug (See <a href="https://github.com/openseadragon/openseadragon/issues/952">https://github.com/openseadragon/openseadragon/issues/952</a>).'),
         ),
-        // @todo iOSDevice
+        // We don't provide "iOSDevice" as configurable to administrators.
         'autoResize' => array(
           '#type' => 'checkbox',
           '#title' => t('Auto Resize'),
@@ -397,10 +407,8 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             '#description' => t('If flickEnabled is true, the momentum factor for the flick gesture.'),
           ),
           'pinchRotate' => array(
-            '#type' => 'textfield',
+            '#type' => 'checkbox',
             '#title' => t('Pinch Rotate'),
-            '#size' => 10,
-            '#element_validate' => array('element_validate_number'),
             '#default_value' => $settings['gestureSettingsMouse']['pinchRotate'],
             '#description' => t('If pinchRotate is true, the user will have the ability to rotate the image using their fingers.'),
           ),
@@ -456,11 +464,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             '#description' => t('If flickEnabled is true, the momentum factor for the flick gesture.'),
           ),
           'pinchRotate' => array(
-            '#type' => 'textfield',
+            '#type' => 'checkbox',
             '#title' => t('Pinch Rotate'),
-            '#size' => 10,
-            '#element_validate' => array('element_validate_number'),
-            '#default_value' => $settings['gestureSettingsTouch']['pinchRotate'],
+            '#default_value' => $settings['gestureSettingsMouse']['pinchRotate'],
             '#description' => t('If pinchRotate is true, the user will have the ability to rotate the image using their fingers.'),
           ),
         ),
@@ -515,11 +521,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             '#description' => t('If flickEnabled is true, the momentum factor for the flick gesture.'),
           ),
           'pinchRotate' => array(
-            '#type' => 'textfield',
+            '#type' => 'checkbox',
             '#title' => t('Pinch Rotate'),
-            '#size' => 10,
-            '#element_validate' => array('element_validate_number'),
-            '#default_value' => $settings['gestureSettingsPen']['pinchRotate'],
+            '#default_value' => $settings['gestureSettingsMouse']['pinchRotate'],
             '#description' => t('If pinchRotate is true, the user will have the ability to rotate the image using their fingers.'),
           ),
         ),
@@ -574,11 +578,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             '#description' => t('If flickEnabled is true, the momentum factor for the flick gesture.'),
           ),
           'pinchRotate' => array(
-            '#type' => 'textfield',
+            '#type' => 'checkbox',
             '#title' => t('Pinch Rotate'),
-            '#size' => 10,
-            '#element_validate' => array('element_validate_number'),
-            '#default_value' => $settings['gestureSettingsPen']['pinchRotate'],
+            '#default_value' => $settings['gestureSettingsMouse']['pinchRotate'],
             '#description' => t('If pinchRotate is true, the user will have the ability to rotate the image using their fingers.'),
           ),
         ),
@@ -612,7 +614,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['showNavigator'],
           '#description' => t('Set to true to make the navigator minimap appear.'),
         ),
-        // @todo navigatorId.
+        // We don't provide "navigatorId" as configurable to administrators.
         'navigatorPosition' => array(
           '#type' => 'select',
           '#title' => t('Navigator Position'),
@@ -628,7 +630,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'navigatorSizeRatio' => array(
           '#type' => 'textfield',
-          '#title' => t('Zoom per second'),
+          '#title' => t('Navigator Size Ratio'),
           '#size' => 10,
           '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['navigatorSizeRatio'],
@@ -730,7 +732,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'timeout' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('timeout'),
           '#size' => 10,
           '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['timeout'],
@@ -738,13 +740,13 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'useCanvas' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Use Canvas'),
           '#default_value' => $settings['useCanvas'],
           '#description' => t('Set to false to not use an HTML canvas element for image rendering even if canvas is supported.'),
         ),
         'minPixelRatio' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Minimum Pixel Ratio'),
           '#size' => 10,
           '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['timeout'],
@@ -752,19 +754,19 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'mouseNavEnabled' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Enable Mouse Navigation'),
           '#default_value' => $settings['mouseNavEnabled'],
           '#description' => t('Is the user able to interact with the image via mouse or touch. Default interactions include draging the image in a plane, and zooming in toward and away from the image.'),
         ),
         'showNavigationControl' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Navigation Control'),
           '#default_value' => $settings['showNavigationControl'],
           '#description' => t('Set to false to prevent the appearance of the default navigation controls. Note that if set to false, the customs buttons set by the options zoomInButton, zoomOutButton etc, are rendered inactive.'),
         ),
         'navigationControlAnchor' => array(
           '#type' => 'select',
-          '#title' => t('label'),
+          '#title' => t('Navigation Control Anchor'),
           '#default_value' => $settings['navigationControlAnchor'],
           '#description' => t('Placement of the default navigation controls. To set the placement of the sequence controls, see the sequenceControlAnchor option.'),
           '#options' => drupal_map_assoc(array(
@@ -777,31 +779,31 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'showZoomControl' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Zoom Control'),
           '#default_value' => $settings['showZoomControl'],
           '#description' => t('If true then + and - buttons to zoom in and out are displayed. Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
         ),
         'showHomeControl' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Home Control'),
           '#default_value' => $settings['showHomeControl'],
           '#description' => t('documentation'),
         ),
         'showFullPageControl' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Full Page Control'),
           '#default_value' => $settings['showFullPageControl'],
           '#description' => t('If true then the rotate left/right controls will be displayed as part of the standard controls. This is also subject to the browser support for rotate (e.g. viewer.drawer.canRotate()). Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
         ),
         'showRotationControl' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Rotation Control'),
           '#default_value' => $settings['showRotationControl'],
           '#description' => t('If sequenceMode is true, then provide buttons for navigating forward and backward through the images.'),
         ),
         'sequenceControlAnchor' => array(
           '#type' => 'select',
-          '#title' => t('label'),
+          '#title' => t('Sequence Control Anchor'),
           '#default_value' => $settings['sequenceControlAnchor'],
           '#description' => t('Placement of the default sequence controls.'),
           '#options' => drupal_map_assoc(array(
@@ -814,195 +816,139 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         ),
         'navPrevNextWrap' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Navigation Previous/Next Wrap'),
           '#default_value' => $settings['navPrevNextWrap'],
           '#description' => t('If true then the "previous" button will wrap to the last image when viewing the first image and the "next" button will wrap to the first image when viewing the last image.'),
         ),
-        'zoomInButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['zoomInButton'],
-          '#description' => t('Set the id of the custom "Zoom in" button to use. This is useful to have a custom button anywhere in the web page. To only change the button images, consider using OpenSeadragon.Options.navImages.'),
-        ),
-        'zoomOutButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['zoomOutButton'],
-          '#description' => t('Set the id of the custom "Zoom out" button to use. This is useful to have a custom button anywhere in the web page. To only change the button images, consider using OpenSeadragon.Options.navImages'),
-        ),
-        'homeButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['homeButton'],
-          '#description' => t(''),
-        ),
-        'fullPageButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['fullPageButton'],
-          '#description' => t(''),
-        ),
-        'rotateLeftButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['rotateLeftButton'],
-          '#description' => t(''),
-        ),
-        'rotateRightButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['rotateRightButton'],
-          '#description' => t(''),
-        ),
-        'previousButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['previousButton'],
-          '#description' => t(''),
-        ),
-        'nextButton' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['nextButton'],
-          '#description' => t(''),
-        ),
+        // We don't provide "zoomInButton" as configurable to administrators.
+        // We don't provide "zoomOutButton" as configurable to administrators.
+        // We don't provide "homeButton" as configurable to administrators.
+        // We don't provide "fullPageButton" as configurable to administrators.
+        // We don't provide "rotateLeftButton" as configurable to administrators.
+        // We don't provide "rotateRightButton" as configurable to administrators.
+        // We don't provide "previousButton" as configurable to administrators.
+        // We don't provide "nextButton" as configurable to administrators.
         'sequenceMode' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Sequence Mode'),
           '#default_value' => $settings['sequenceMode'],
-          '#description' => t(''),
+          '#description' => t('Set to true to have the viewer treat your tilesources as a sequence of images to be opened one at a time rather than all at once.'),
         ),
-        'initialPage' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['initialPage'],
-          '#description' => t(''),
-        ),
+        // We don't provide "initialPage" as configurable to administrators.
         'preserveViewport' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Preserve View-port'),
           '#default_value' => $settings['preserveViewport'],
-          '#description' => t(''),
+          '#description' => t('If sequenceMode is true, then normally navigating through each image resets the viewport to "home" position. If preserveViewport is set to true, then the viewport position is preserved when navigating between images in the sequence.'),
         ),
         'preserveOverlays' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Preserve Overlays'),
           '#default_value' => $settings['preserveOverlays'],
-          '#description' => t(''),
+          '#description' => t('If sequenceMode is true, then normally navigating through each image resets the overlays. If preserveOverlays is set to true, then the overlays added with OpenSeadragon.Viewer#addOverlay are preserved when navigating between images in the sequence. Note: setting preserveOverlays overrides any overlays specified in the global "overlays" option for the Viewer. It\'s also not compatible with specifying per-tileSource overlays via the options, as those overlays will persist even after the tileSource is closed.'),
         ),
         'showReferenceStrip' => array(
           '#type' => 'checkbox',
-          '#title' => t('label'),
+          '#title' => t('Show Reference Strip'),
           '#default_value' => $settings['showReferenceStrip'],
-          '#description' => t(''),
+          '#description' => t('If sequenceMode is true, then display a scrolling strip of image thumbnails for navigating through the images.'),
         ),
         'referenceStripScroll' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
+          '#type' => 'select',
+          '#title' => t('Reference Strip Scroll'),
           '#default_value' => $settings['referenceStripScroll'],
-          '#description' => t(''),
+          '#description' => t('Display the reference strip horizontally or vertically.'),
+          '#options' => drupal_map_assoc(array(
+                        'horizontal',
+                        'vertical',
+                      )),
         ),
-        'referenceStripElement' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['referenceStripElement'],
-          '#description' => t(''),
-        ),
+        // We don't provide "referenceStripElement" as configurable to administrators.
         'referenceStripHeight' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Reference Strip Height'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['referenceStripHeight'],
-          '#description' => t(''),
+          '#description' => t('Height of the reference strip in pixels.'),
         ),
         'referenceStripWidth' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Reference Strip Width'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['referenceStripWidth'],
-          '#description' => t(''),
+          '#description' => t('Width of the reference strip in pixels.'),
         ),
         'referenceStripPosition' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
+          '#title' => t('Reference Strip Position'),
           '#default_value' => $settings['referenceStripPosition'],
-          '#description' => t(''),
+          '#description' => t('The position of the reference strip.'),
+          '#options' => drupal_map_assoc(array(
+                        'TOP_RIGHT',
+                        'TOP_LEFT',
+                        'BOTTOM_LEFT',
+                        'BOTTOM_RIGHT',
+                      )),
         ),
         'referenceStripSizeRatio' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Reference Strip Size Ratio'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['referenceStripSizeRatio'],
-          '#description' => t(''),
+          '#description' => t('Ratio of reference strip size to viewer size.'),
         ),
         'collectionMode' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
+          '#type' => 'checkbox',
+          '#title' => t('Collection Mode'),
           '#default_value' => $settings['collectionMode'],
-          '#description' => t(''),
+          '#description' => t('Set to true to have the viewer arrange your TiledImages in a grid or line.'),
         ),
         'collectionRows' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Collection Rows'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['collectionRows'],
-          '#description' => t(''),
+          '#description' => t('If collectionMode is true, specifies how many rows the grid should have. Use 1 to make a line. If collectionLayout is "vertical", specifies how many columns instead.'),
         ),
         'collectionColumns' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Collection Columns'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['collectionColumns'],
-          '#description' => t(''),
+          '#description' => t('If collectionMode is true, specifies how many columns the grid should have. Use 1 to make a line. If collectionLayout is "vertical", specifies how many rows instead. Ignored if collectionRows is not set to a falsy value.'),
         ),
         'collectionLayout' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
+          '#type' => 'select',
+          '#title' => t('Collection Layout'),
           '#default_value' => $settings['collectionLayout'],
-          '#description' => t(''),
+          '#description' => t('If collectionMode is true, specifies whether to arrange vertically or horizontally.'),
+          '#options' => drupal_map_assoc(array(
+                        'horizontal',
+                        'vertical',
+                      )),
         ),
         'collectionTileSize' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Collection Tile Size'),
           '#size' => 10,
           '#default_value' => $settings['collectionTileSize'],
-          '#description' => t(''),
+          '#description' => t('If collectionMode is true, specifies the size, in viewport coordinates, for each TiledImage to fit into. The TiledImage will be centered within a square of the specified size.'),
         ),
         'collectionTileMargin' => array(
           '#type' => 'textfield',
-          '#title' => t('label'),
+          '#title' => t('Collection Tile Margin'),
           '#size' => 10,
+          '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['collectionTileMargin'],
-          '#description' => t(''),
+          '#description' => t('If collectionMode is true, specifies the margin, in viewport coordinates, between each TiledImage.'),
         ),
-        'crossOriginPolicy' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['crossOriginPolicy'],
-          '#description' => t(''),
-        ),
-        'ajaxWithCredentials' => array(
-          '#type' => 'textfield',
-          '#title' => t('label'),
-          '#size' => 10,
-          '#default_value' => $settings['ajaxWithCredentials'],
-          '#description' => t(''),
-        ),
+        // We don't provide "crossOriginPolicy" as configurable to administrators.
+        // We don't provide "ajaxWithCredentials" as configurable to administrators.
       )
     ),
     'actions' => array(
