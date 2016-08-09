@@ -5,8 +5,10 @@
  * Hooks and callbacks for this module.
  */
 
+define('OPENSEADRAGON_REQUIRED_VERSION', '2.2.1');
+
 /**
- * Implements hook_menu().
+ * Implements hook_menu()
  */
 function islandora_openseadragon_menu() {
   return array(
@@ -25,6 +27,7 @@ function islandora_openseadragon_menu() {
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
+      'file' => 'includes/download.clip.inc',
       'load arguments' => array(2),
     ),
   );
@@ -37,13 +40,15 @@ function islandora_openseadragon_theme() {
   return array(
     'islandora_openseadragon_viewer' => array(
       'variables' => array(
-        'uri' => '',
         'fedora_object' => NULL,
+        'tile_sources' => array(),
       ),
+      'file' => 'theme/theme.inc',
       'template' => 'theme/islandora-openseadragon',
     ),
     // A link for clipping JP2 datastreams via djatoka.
     'islandora_openseadragon_clipper' => array(
+      'file' => 'theme/theme.inc',
       'variables' => array(
         'pid' => NULL,
       ),
@@ -60,11 +65,11 @@ function islandora_openseadragon_islandora_viewer_info() {
     // is completely dependent on it's parent.
     'islandora_openseadragon' => array(
       'label' => t('OpenSeadragon'),
-        // Later we'll add DZI too.
+      // Later we'll add DZI too.
       'description' => t('OpenSeadragon viewer with djatoka as tilesource.'),
       'configuration' => 'admin/islandora/islandora_viewers/openseadragon',
       'callback' => 'islandora_openseadragon_callback',
-        // DZI has xml as mimetype? Not sure how to handle that.
+      // DZI has xml as mimetype? Not sure how to handle that.
       'mimetype' => array('image/jp2'),
     ),
   );
@@ -76,152 +81,27 @@ function islandora_openseadragon_islandora_viewer_info() {
  * @param array $params
  *   Params required by the theme. We require the keys:
  *   - jp2_url: The URL to the JP2 image.
- * @param IslandoraAbstractObject $fedora_object
+ * @param AbstractObject $object
  *   The object that we are viewing.
  *
  * @return string
- *   HTML repersentation of the OpenSeadragon viewer
+ *   HTML representation of the OpenSeadragon viewer
  */
-function islandora_openseadragon_callback($params = NULL, $fedora_object = NULL) {
-  if (isset($params['jp2_url'])) {
-    $uri = $params['jp2_url'];
-    return theme('islandora_openseadragon_viewer', array('uri' => $uri, 'fedora_object' => $fedora_object));
-  }
-}
-
-/**
- * Implements hook_preprocess().
- */
-function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$variables) {
-  // Variable fedora_object included in results, but not used.
-  $library_path = libraries_get_path('openseadragon');
-  $module_path = drupal_get_path('module', 'islandora_openseadragon');
-  $variables['viewer_id'] = 'islandora-openseadragon';
-  $settings = array(
-    'id' => $variables['viewer_id'],
-    'prefixUrl' => file_create_url("$library_path/images/"),
-  );
-
+function islandora_openseadragon_callback($params = NULL, $object = NULL) {
   module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
-  $installed_version = islandora_openseadragon_get_installed_version();
-
-  if (version_compare($installed_version, '0.9.82') <= 0) {
-    // XXX: Version numbers don't quite line-up for the change in the nav image
-    // prefix URL, so now, let the hacking begin!... Just for compatibility
-    // with older versions.
-    $types = array('zoomIn', 'zoomOut', 'home', 'fullpage', 'previous', 'next');
-    $actions = array(
-      'REST' => 'rest',
-      'GROUP' => 'grouphover',
-      'HOVER' => 'hover',
-      'DOWN' => 'pressed',
-    );
-    foreach ($types as $type) {
-      foreach ($actions as $action => $namepart) {
-        $settings['navImages'][$type][$action] = format_string('!type_!action.png', array(
-          '!type' => strtolower($type),
-          '!action' => $namepart,
-        ));
-      }
-    }
-  }
-
-  $settings = array_merge($settings, islandora_openseadragon_get_settings());
-  foreach ($settings as $key => $val) {
-    if (filter_var($val, FILTER_VALIDATE_FLOAT)) {
-      $settings[$key] = (float) $val;
-    }
-    elseif (filter_var($val, FILTER_VALIDATE_INT)) {
-      $settings[$key] = (int) $val;
-    }
-    elseif (filter_var($val, FILTER_VALIDATE_URL)) {
-      $settings[$key] = check_url($val);
-    }
-  }
-
-  // This is where we jam in some HOCR coordinates.
-  if (isset($variables['fedora_object']) && isset($_GET['solr'])) {
-    $params = $_GET['solr']['params'];
-    $params['fq'][] = format_string('PID:"!pid"', array(
-      '!pid' => $variables['fedora_object']->id,
-    ));
-    module_load_include('inc', 'islandora_paged_content', 'includes/highlighting');
-    $highlighting_info = islandora_paged_content_perform_solr_highlighting_query($_GET['solr']['query'], $params);
-    $highlights = array();
-
-    foreach ($highlighting_info as $pid => $info) {
-      if (array_key_exists('snippets', $info)) {
-        foreach ($info['snippets'] as $snippet => $bounding_boxes) {
-          foreach ($bounding_boxes as $bounding_box) {
-            // The size on the x axis is used to calculate the proportional
-            // values under the openseadragon coordinate system.
-            $highlights[] = array(
-              'x' => $bounding_box['left'] / $info['page']['width'],
-              'y' => $bounding_box['top'] / $info['page']['width'],
-              'width' => ($bounding_box['right'] - $bounding_box['left']) / $info['page']['width'],
-              'height' => ($bounding_box['bottom'] - $bounding_box['top']) / $info['page']['width'],
-              'className' => "islandora-openseadragon-highlight",
-            );
-          }
-        }
-      }
-    }
-    $settings['overlays'] = $highlights;
-  }
-
-  drupal_add_js(array(
-      'islandoraOpenSeadragon' => array(
-        'pid' => isset($variables['fedora_object']) ? $variables['fedora_object']->id : NULL,
-        'resourceUri' => $variables['uri'],
-        'tileSize' => (int) variable_get('islandora_openseadragon_tile_size', '256'),
-        'tileOverlap' => (int) variable_get('islandora_openseadragon_tile_overlap', '0'),
-        'fitToAspectRatio' => variable_get('islandora_openseadragon_fit_to_aspect_ratio', FALSE),
-        'settings' => $settings,
-      ),
-    ), 'setting');
-  drupal_add_js("$library_path/openseadragon.js", array('weight' => -4));
-  drupal_add_js("$module_path/js/islandora_openseadragon.js", array('weight' => -3));
-  drupal_add_js("$module_path/js/djtilesource.js", array('weight' => -2));
-  drupal_add_css("$module_path/css/islandora_openseadragon.theme.css");
-}
-
-/**
- * Get OpenSeadragon settings.
- *
- * @return array
- *   Configuration options for OpenSeadragon.
- */
-function islandora_openseadragon_get_settings() {
-  return variable_get('islandora_openseadragon_settings', array()) + array(
-    'debugMode' => FALSE,
-    'djatokaServerBaseURL' => '/adore-djatoka/resolver',
-    'animationTime' => '1.5',
-    'blendTime' => '0.1',
-    'alwaysBlend' => FALSE,
-    'autoHideControls' => TRUE,
-    'immediateRender' => FALSE,
-    'wrapHorizontal' => FALSE,
-    'wrapVertical' => FALSE,
-    'wrapOverlays' => FALSE,
-    'panHorizontal' => TRUE,
-    'panVertical' => TRUE,
-    'minZoomImageRatio' => '0.8',
-    'maxZoomPixelRatio' => '2',
-    'visibilityRatio' => '0.5',
-    'springStiffness' => '5.0',
-    'imageLoaderLimit' => '5',
-    'clickTimeThreshold' => '300',
-    'clickDistThreshold' => '5',
-    'zoomPerClick' => '2.0',
-    'zoomPerScroll' => '1.2',
-    'zoomPerSecond' => '2.0',
-    'showNavigator' => TRUE,
-    'defaultZoomLevel' => '1.0',
-  );
+  $matches = array();
+  preg_match('/datastream\/([^\/]*)\/view/', $params['jp2_url'], $matches);
+  $dsid = isset($matches[1]) ? $matches[1] : FALSE;
+  $datastream = $dsid && $object[$dsid] ? $object[$dsid] : FALSE;
+  $tile_sources = $datastream ? array(islandora_openseadragon_tile_source($datastream)) : array();
+  return theme('islandora_openseadragon_viewer', array('pid' => $object->id, 'tile_sources' => $tile_sources));
 }
 
 /**
  * Implements hook_process_theme().
+ *
+ * @param array $variables
+ *   Theme variables to alter.
  */
 function islandora_openseadragon_preprocess_islandora_object_print(array &$variables) {
   if (isset($_GET['clip'])) {
@@ -233,7 +113,9 @@ function islandora_openseadragon_preprocess_islandora_object_print(array &$varia
         '#weight' => 0,
         '#prefix' => "<div id='clip'>",
         '#markup' => theme_image(array(
-                     'path' => $clip_parts['djatoka_image_url'], 'attributes' => $clip_parts['dimensions'])),
+          'path' => $clip_parts['djatoka_image_url'],
+          'attributes' => $clip_parts['dimensions']
+        )),
         '#suffix' => '</div>',
       );
     }
@@ -241,61 +123,4 @@ function islandora_openseadragon_preprocess_islandora_object_print(array &$varia
       drupal_set_message(t('Invalid clip parameters passed.'), 'error');
     }
   }
-}
-
-
-/**
- * Theme function to create a clipper link.
- */
-function theme_islandora_openseadragon_clipper(&$variables) {
-  $image = theme(
-    'image',
-    array(
-      'path' => drupal_get_path('module', 'islandora_openseadragon') . '/images/clip_icon.png',
-    )
-  );
-  return l(
-    $image,
-    "islandora/object/{$variables['pid']}/print",
-    array(
-      'attributes' => array(
-        'title' => t('Clip Image'),
-        'id' => 'clip',
-      ),
-      'html' => TRUE,
-    )
-  );
-}
-
-/**
- * Menu callback downloads the given clip.
- *
- * @param AbstractObject $object
- *   An AbstractObject representing an object within Fedora.
- */
-function islandora_openseadragon_download_clip(AbstractObject $object) {
-  if (isset($_GET['clip'])) {
-    module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
-    $clip_parts = islandora_openseadragon_construct_clip_url($_GET['clip'], TRUE);
-    if ($clip_parts) {
-      $filename = $object->label;
-      header("Content-Disposition: attachment; filename=\"{$filename}.jpg\"");
-      header("Content-type: image/jpeg");
-      header("Content-Transfer-Encoding: binary");
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-      curl_setopt($ch, CURLOPT_HEADER, 0);
-      curl_setopt($ch, CURLOPT_URL, $clip_parts['djatoka_image_url']);
-      curl_exec($ch);
-      curl_close($ch);
-    }
-    else {
-      drupal_access_denied();
-      watchdog('islandora_openseadragon', 'Invalid parameters specified for downloading of a clip for @pid. Parameters attempted: @params.', array(
-        '@pid' => $object->id,
-        '@params' => $_GET['clip'],
-      ));
-    }
-  }
-  exit();
 }
