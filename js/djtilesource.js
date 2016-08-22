@@ -73,7 +73,7 @@
       }
       // If default's are not provided, fetch meta-data asynchronously.
       if (!data.width || !data.height || !data.maxLevel) {
-        data.url = getImageInfoURL(data.identifier);
+        data.url = get_image_info_url(data.identifier);
       }
       return data;
     },
@@ -123,7 +123,7 @@
    * @param {string} pid - fedora object identifier.
    * @return {string} URL to fetch image meta-data from Djatoka.
    */
-  function getImageInfoURL(identifier) {
+  function get_image_info_url(identifier) {
     var baseURL = Drupal.settings.islandoraOpenSeadragon.djatokaServerBaseURL;
     return baseURL + '?' + jQuery.param({
           url_ver: "Z39.88-2004",
