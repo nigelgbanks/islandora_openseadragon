@@ -91,9 +91,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
       'islandora_openseadragon_settings' => array(
         '#type' => 'container',
         '#tree' => TRUE,
-        // We don't provide "id" as configurable to administrators.
-        // We don't provide "element" as configurable to administrators.
-        // We don't provide "tileSources" as configurable to administrators.
+        // We don't provide "id" as configurable to users.
+        // We don't provide "element" as configurable to users.
+        // We don't provide "tileSources" as configurable to users.
         'tabIndex' => array(
           '#type' => 'textfield',
           '#title' => t('Tab Index'),
@@ -173,7 +173,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
             'destination-out',
             'lighter',
             'copy',
-            'xor'
+            'xor',
           )),
         ),
         'placeholderFillStyle' => array(
@@ -265,7 +265,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['smoothTileEdgesMinZoom'],
           '#description' => t('A zoom percentage ( where 1 is 100% ) of the highest resolution level. When zoomed in beyond this value alternative compositing will be used to smooth out the edges between tiles. This will have a performance impact. Can be set to Infinity to turn it off. Note: This setting is ignored on iOS devices due to a known bug (See <a href="https://github.com/openseadragon/openseadragon/issues/952">https://github.com/openseadragon/openseadragon/issues/952</a>).'),
         ),
-        // We don't provide "iOSDevice" as configurable to administrators.
+        // We don't provide "iOSDevice" as configurable to users.
         'autoResize' => array(
           '#type' => 'checkbox',
           '#title' => t('Auto Resize'),
@@ -300,7 +300,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#size' => 10,
           '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['visibilityRatio'],
-          '#description' => t('The percentage ( as a number from 0 to 1 ) of the source image which must be kept within the viewport. If the image is dragged beyond that limit, it will \'bounce\' back until the minimum visibility ratio is achieved. Setting this to 0 and wrapHorizontal ( or wrapVertical ) to true will provide the effect of an infinitely scrolling viewport.'),
+          '#description' => t("The percentage ( as a number from 0 to 1 ) of the source image which must be kept within the viewport. If the image is dragged beyond that limit, it will 'bounce' back until the minimum visibility ratio is achieved. Setting this to 0 and wrapHorizontal ( or wrapVertical ) to true will provide the effect of an infinitely scrolling viewport."),
         ),
         'imageLoaderLimit' => array(
           '#type' => 'textfield',
@@ -616,7 +616,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['showNavigator'],
           '#description' => t('Set to true to make the navigator minimap appear.'),
         ),
-        // We don't provide "navigatorId" as configurable to administrators.
+        // We don't provide "navigatorId" as configurable to users.
         'navigatorPosition' => array(
           '#type' => 'select',
           '#title' => t('Navigator Position'),
@@ -738,7 +738,6 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#size' => 10,
           '#element_validate' => array('element_validate_number'),
           '#default_value' => $settings['timeout'],
-          '#description' => t(''),
         ),
         'useCanvas' => array(
           '#type' => 'checkbox',
@@ -795,7 +794,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#type' => 'checkbox',
           '#title' => t('Show Full Page Control'),
           '#default_value' => $settings['showFullPageControl'],
-          '#description' => t('If true then the rotate left/right controls will be displayed as part of the standard controls. This is also subject to the browser support for rotate (e.g. viewer.drawer.canRotate()). Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
+          '#description' => t('If true then the rotate left/right controls will be displayed as part of the standard controls. This is also subject to the browser support for rotate (e.g., viewer.drawer.canRotate()). Note: OpenSeadragon.Options.showNavigationControl is overriding this setting when set to false.'),
         ),
         'showRotationControl' => array(
           '#type' => 'checkbox',
@@ -822,21 +821,21 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['navPrevNextWrap'],
           '#description' => t('If true then the "previous" button will wrap to the last image when viewing the first image and the "next" button will wrap to the first image when viewing the last image.'),
         ),
-        // We don't provide "zoomInButton" as configurable to administrators.
-        // We don't provide "zoomOutButton" as configurable to administrators.
-        // We don't provide "homeButton" as configurable to administrators.
-        // We don't provide "fullPageButton" as configurable to administrators.
-        // We don't provide "rotateLeftButton" as configurable to administrators.
-        // We don't provide "rotateRightButton" as configurable to administrators.
-        // We don't provide "previousButton" as configurable to administrators.
-        // We don't provide "nextButton" as configurable to administrators.
+        // We don't provide "zoomInButton" as configurable to users.
+        // We don't provide "zoomOutButton" as configurable to users.
+        // We don't provide "homeButton" as configurable to users.
+        // We don't provide "fullPageButton" as configurable to users.
+        // We don't provide "rotateLeftButton" as configurable to users.
+        // We don't provide "rotateRightButton" as configurable to users.
+        // We don't provide "previousButton" as configurable to users.
+        // We don't provide "nextButton" as configurable to users.
         'sequenceMode' => array(
           '#type' => 'checkbox',
           '#title' => t('Sequence Mode'),
           '#default_value' => $settings['sequenceMode'],
           '#description' => t('Set to true to have the viewer treat your tilesources as a sequence of images to be opened one at a time rather than all at once.'),
         ),
-        // We don't provide "initialPage" as configurable to administrators.
+        // We don't provide "initialPage" as configurable to users.
         'preserveViewport' => array(
           '#type' => 'checkbox',
           '#title' => t('Preserve View-port'),
@@ -865,7 +864,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
                         'vertical',
                       )),
         ),
-        // We don't provide "referenceStripElement" as configurable to administrators.
+        // We don't provide "referenceStripElement" as configurable to users.
         'referenceStripHeight' => array(
           '#type' => 'textfield',
           '#title' => t('Reference Strip Height'),
@@ -949,9 +948,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['collectionTileMargin'],
           '#description' => t('If collectionMode is true, specifies the margin, in viewport coordinates, between each TiledImage.'),
         ),
-        // We don't provide "crossOriginPolicy" as configurable to administrators.
-        // We don't provide "ajaxWithCredentials" as configurable to administrators.
-      )
+        // We don't provide "crossOriginPolicy" as configurable to users.
+        // We don't provide "ajaxWithCredentials" as configurable to users.
+      ),
     ),
     'actions' => array(
       '#type' => 'actions',
@@ -962,7 +961,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         '#submit' => array('islandora_openseadragon_admin_submit_reset'),
       ),
     ),
-   '#submit' => array('islandora_openseadragon_admin_submit_normalize'),
+    '#submit' => array('islandora_openseadragon_admin_submit_normalize'),
   );
   return system_settings_form($form);
 }
@@ -1001,7 +1000,7 @@ function islandora_openseadragon_admin_form_djatoka_access_message($path) {
       'svc_val_fmt' => 'info:ofi/fmt:kev:mtx:jpeg2000',
       'svc.format' => 'image/jpeg',
       'svc.level' => '1',
-    )
+    ),
   ));
   $result = drupal_http_request($url);
   if ($result->code == 200) {
@@ -1021,10 +1020,10 @@ function islandora_openseadragon_admin_form_djatoka_access_message($path) {
  *
  * @param array $element
  *   The element to validate.
- * @param array $form
- *   Drupal form.
  * @param array $form_state
  *   Drupal form state.
+ * @param array $form
+ *   Drupal form.
  */
 function islandora_openseadragon_djatoka_url_validate(array $element, array &$form_state, array $form) {
   $path = $element['#value'];
@@ -1041,7 +1040,7 @@ function islandora_openseadragon_djatoka_url_validate(array $element, array &$fo
         'svc_val_fmt' => 'info:ofi/fmt:kev:mtx:jpeg2000',
         'svc.format' => 'image/jpeg',
         'svc.level' => '1',
-      )
+      ),
     ));
     $result = drupal_http_request($url);
     if ($result->code != 200) {
@@ -1080,7 +1079,7 @@ function islandora_openseadragon_admin_submit_reset(array $form, array &$form_st
       variable_del('islandora_openseadragon_settings');
       variable_del('islandora_openseadragon_tile_size');
       variable_del('islandora_openseadragon_tile_overlap');
-     break;
+      break;
   }
 }
 

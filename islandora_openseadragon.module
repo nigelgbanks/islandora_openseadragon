@@ -5,10 +5,10 @@
  * Hooks and callbacks for this module.
  */
 
-define('OPENSEADRAGON_REQUIRED_VERSION', '2.2.1');
+define('ISLANDORA_OPENSEADRAGON_REQUIRED_VERSION', '2.2.1');
 
 /**
- * Implements hook_menu()
+ * Implements hook_menu().
  */
 function islandora_openseadragon_menu() {
   return array(
@@ -99,9 +99,6 @@ function islandora_openseadragon_callback($params = NULL, $object = NULL) {
 
 /**
  * Implements hook_process_theme().
- *
- * @param array $variables
- *   Theme variables to alter.
  */
 function islandora_openseadragon_preprocess_islandora_object_print(array &$variables) {
   if (isset($_GET['clip'])) {
@@ -114,7 +111,7 @@ function islandora_openseadragon_preprocess_islandora_object_print(array &$varia
         '#prefix' => "<div id='clip'>",
         '#markup' => theme_image(array(
           'path' => $clip_parts['djatoka_image_url'],
-          'attributes' => $clip_parts['dimensions']
+          'attributes' => $clip_parts['dimensions'],
         )),
         '#suffix' => '</div>',
       );

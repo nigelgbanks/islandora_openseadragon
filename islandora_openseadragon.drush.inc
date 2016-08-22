@@ -36,12 +36,6 @@ function islandora_openseadragon_drush_command() {
 
 /**
  * Implements hook_drush_help().
- *
- * @param string $section
- *   The section in which to display the help message.
- *
- * @return string
- *   The help message.
  */
 function islandora_openseadragon_drush_help($section) {
   switch ($section) {
