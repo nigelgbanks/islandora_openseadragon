@@ -120,16 +120,24 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
 /**
  * Get OpenSeadragon settings.
  *
+ * @param bool $to_javascript
+ *   If returning settings to javascript strip NULL values.
+ *
  * @return array
  *   Configuration options for OpenSeadragon.
  */
-function islandora_openseadragon_get_settings() {
-  $settings = variable_get('islandora_openseadragon_settings', array()) + islandora_openseadraon_default_options();
+function islandora_openseadragon_get_settings($to_javascript = FALSE) {
+  $defaults = islandora_openseadragon_default_options();
+  $settings = variable_get('islandora_openseadragon_settings', array());
+  $settings = array_replace_recursive($defaults, $settings);
   // We have to filter NULL values, to prevent issues with javascript.
   $is_not_null = function($val) {
     return !is_null($val);
   };
-  return array_filter($settings, $is_not_null);
+  if ($to_javascript) {
+    $settings = array_filter($settings, $is_not_null);
+  }
+  return $settings;
 }
 
 /**
@@ -140,7 +148,7 @@ function islandora_openseadragon_get_settings() {
  * @return array
  *   An associative array to pass to customize the behavior of OpenSeadragon.
  */
-function islandora_openseadraon_default_options() {
+function islandora_openseadragon_default_options() {
   $library_path = libraries_get_path('openseadragon');
   $defaults = array(
     'id' => 'islandora-openseadragon',
@@ -229,8 +237,8 @@ function islandora_openseadraon_default_options() {
     'zoomPerClick' => 2.0,
     'zoomPerScroll' => 1.2,
     'zoomPerSecond' => 1.0,
-    'showNavigator' => FALSE,
     'navigatorId' => NULL,
+    'showNavigator' => FALSE,
     'navigatorPosition' => 'TOP_RIGHT',
     'navigatorSizeRatio' => 0.2,
     'navigatorMaintainSizeRatio' => FALSE,
@@ -298,7 +306,7 @@ function islandora_openseadraon_default_options() {
  *   The metadata required by the users chosen implementation.
  */
 function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
-  switch (variable_get('islandora_opensedragon_tilesource', 'djatoka')) {
+  switch (variable_get('islandora_openseadragon_tilesource', 'djatoka')) {
     case 'djatoka':
       return islandora_openseadragon_djatoka_tile_source($datastream);
 
@@ -438,5 +446,5 @@ function islandora_openseadragon_viewer_query_solr_for_overlays($pid) {
  *   TRUE if Djatoka server is to be used.
  */
 function islandora_openseadragon_use_djatoka_server() {
-  return variable_get('islandora_opensedragon_tilesource', 'djatoka') == 'djatoka';
+  return variable_get('islandora_openseadragon_tilesource', 'djatoka') == 'djatoka';
 }

@@ -10,5 +10,6 @@
  * string $uri
  *   The uri to the image to display in OpenSeadragon.
  */
+
 ?>
 <div id="<?php print $viewer_id ?>" class="islandora-openseadragon"></div>
