@@ -152,7 +152,7 @@ chown -R loris:loris /usr/local/share/images/
 #### Configure Apache
 Choose the right number of process/threads/maximum requests for your needs.
 
-Where you add these lines will vary depending on your sites setup,b ut will likely reside in
+Where you add these lines will vary depending on your sites setup, but will likely reside in
 _/etc/apache2/sites-enabled/000-default.conf_:
 ```
 AllowEncodedSlashes On
@@ -183,7 +183,7 @@ Modify _/etc/loris2/loris2.conf_, such that it contains the following:
 sudo apachectl restart
 ```
 
-Finally Set the paths for 'IIIF server base URL' and configure OpenSeadradon in Administration » Islandora » OpenSeadragon (admin/islandora/module).
+Finally set the paths for 'IIIF server base URL' and configure OpenSeadradon in Administration » Islandora » OpenSeadragon (admin/islandora/module).
 
 ## Documentation
 

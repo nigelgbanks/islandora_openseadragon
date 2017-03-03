@@ -17,7 +17,7 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
   $variables['id'] = $variables['viewer_id'] = 'islandora-openseadragon';
   $variables['settings'] = array(
     'pid' => $variables['pid'],
-    'imageServer' => variable_get('islandora_opensedragon_tilesource', 'djatoka'),
+    'imageServer' => variable_get('islandora_openseadragon_tilesource', 'djatoka'),
     'djatokaServerBaseURL' => url(variable_get('islandora_openseadragon_djatoka_url', 'adore-djatoka/resolver')),
     'iiifServerBaseURL' => url(variable_get('islandora_openseadragon_iiif_url', 'loris')),
     'fitToAspectRatio' => variable_get('islandora_openseadragon_fit_to_aspect_ratio', FALSE),
@@ -26,7 +26,7 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
       'prefixUrl' => url("{$library_path}/images/", array('absolute' => TRUE)),
       'tileSources' => $variables['tile_sources'],
       'overlays' => islandora_openseadragon_viewer_query_solr_for_overlays($variables['pid']),
-    ) + islandora_openseadragon_get_settings(),
+    ) + islandora_openseadragon_get_settings(TRUE),
   );
 }
 
