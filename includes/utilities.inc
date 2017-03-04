@@ -127,9 +127,7 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
  *   Configuration options for OpenSeadragon.
  */
 function islandora_openseadragon_get_settings($filter_null = TRUE) {
-  $defaults = islandora_openseadragon_default_options();
-  $settings = variable_get('islandora_openseadragon_settings', array());
-  $settings = array_replace_recursive($defaults, $settings);
+  $settings = variable_get('islandora_openseadragon_settings', array()) + islandora_openseadragon_default_options();
   // We have to filter NULL values, to prevent issues with javascript.
   $is_not_null = function ($val) {
     return !is_null($val);

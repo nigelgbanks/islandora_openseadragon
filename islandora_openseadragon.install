@@ -66,10 +66,25 @@ function islandora_openseadragon_uninstall() {
  * This is the first instance that has this table.
  */
 function islandora_openseadragon_update_7100(array &$sandbox) {
+  // Get new OpenSeadragon default settings.
+  $new_settings = islandora_openseadragon_default_options();
+  // Get the old settings.
+  $old_settings = variable_get('islandora_openseadragon_settings', array());
+
+  if (isset($old_settings['djatokaServerBaseURL'])) {
+    $new_settings['islandora_openseadragon_djatoka_url'] = $old_settings['djatokaServerBaseURL'];
+    unset($old_settings['djatokaServerBaseURL']);
+  }
+  // No longer exists.
+  unset($old_settings['wrapOverlays']);
+  // The rest of the settings have the same name and will overwrite defaults.
+  $new_settings = array_replace($new_settings, $old_settings);
+  // Save updated OpenSeadragon settings.
+  variable_set('islandora_openseadragon_settings', $new_settings);
+
   $t = get_t();
-  // Variable structure has changed.
+  // Remove variables no longer configurable.
   $variables = array(
-    'islandora_openseadragon_settings',
     'islandora_openseadragon_tile_size',
     'islandora_openseadragon_tile_overlap',
   );
