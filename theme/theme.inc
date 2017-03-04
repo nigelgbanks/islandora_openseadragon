@@ -23,10 +23,10 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
     'fitToAspectRatio' => variable_get('islandora_openseadragon_fit_to_aspect_ratio', FALSE),
     'options' => array(
       'id' => $variables['id'],
-      'prefixUrl' => url("{$library_path}/images/", array('absolute' => TRUE)),
+      'prefixUrl' => file_create_url("{$library_path}/images/"),
       'tileSources' => $variables['tile_sources'],
       'overlays' => islandora_openseadragon_viewer_query_solr_for_overlays($variables['pid']),
-    ) + islandora_openseadragon_get_settings(TRUE),
+    ) + islandora_openseadragon_get_settings(),
   );
 }
 

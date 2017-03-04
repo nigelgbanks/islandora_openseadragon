@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Admin callbacks for Islandora OpenSeadragon
+ * Admin callbacks for Islandora OpenSeadragon.
  */
 
 /**
@@ -19,7 +19,7 @@
 function islandora_openseadragon_admin(array $form, array &$form_state) {
   module_load_include('inc', 'islandora', 'includes/utilities');
   module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
-  $settings = islandora_openseadragon_get_settings();
+  $settings = islandora_openseadragon_get_settings(FALSE);
   $version = islandora_openseadragon_get_installed_version();
   $djatoka_url = islandora_system_settings_form_default_value('islandora_openseadragon_djatoka_url', 'adore-djatoka/resolver', $form_state);
   $iiif_url = islandora_system_settings_form_default_value('islandora_openseadragon_iiif_url', 'loris', $form_state);
@@ -801,12 +801,12 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
               '#default_value' => $settings['navigationControlAnchor'],
               '#description' => t('Placement of the default navigation controls. To set the placement of the sequence controls, see the sequenceControlAnchor option.'),
               '#options' => drupal_map_assoc(array(
-                            'TOP_RIGHT',
-                            'TOP_LEFT',
-                            'BOTTOM_LEFT',
-                            'BOTTOM_RIGHT',
-                            'ABSOLUTE',
-                          )),
+                'TOP_RIGHT',
+                'TOP_LEFT',
+                'BOTTOM_LEFT',
+                'BOTTOM_RIGHT',
+                'ABSOLUTE',
+              )),
             ),
             'showZoomControl' => array(
               '#type' => 'checkbox',
@@ -840,12 +840,12 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
           '#default_value' => $settings['sequenceControlAnchor'],
           '#description' => t('Placement of the default sequence controls.'),
           '#options' => drupal_map_assoc(array(
-                        'TOP_RIGHT',
-                        'TOP_LEFT',
-                        'BOTTOM_LEFT',
-                        'BOTTOM_RIGHT',
-                        'ABSOLUTE',
-                      )),
+            'TOP_RIGHT',
+            'TOP_LEFT',
+            'BOTTOM_LEFT',
+            'BOTTOM_RIGHT',
+            'ABSOLUTE',
+          )),
         ),
         'navPrevNextWrap' => array(
           '#type' => 'checkbox',
@@ -913,7 +913,8 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
                   'vertical',
                 )),
               ),
-              // We don't provide "referenceStripElement" as configurable to users.
+              // We don't provide "referenceStripElement" as configurable
+              // to users.
               'referenceStripHeight' => array(
                 '#type' => 'textfield',
                 '#title' => t('Reference Strip Height'),
@@ -991,9 +992,9 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
               '#default_value' => $settings['collectionLayout'],
               '#description' => t('If collectionMode is true, specifies whether to arrange vertically or horizontally.'),
               '#options' => drupal_map_assoc(array(
-                            'horizontal',
-                            'vertical',
-                          )),
+                'horizontal',
+                'vertical',
+              )),
             ),
             'collectionTileSize' => array(
               '#type' => 'textfield',
@@ -1074,7 +1075,8 @@ function islandora_openseadragon_admin_form_djatoka_access_message($path) {
   else {
     $confirmation_message = theme_image(array('path' => 'misc/watchdog-error.png', 'attributes' => array()));
     $confirmation_message .= t('Unable to connect to Adore Djatoka Server at !path', array(
-      '!path' => $path));
+      '!path' => $path,
+    ));
   }
   return $confirmation_message;
 }
@@ -1199,7 +1201,7 @@ function _islandora_openseadragon_normalize_setting($value) {
     return (float) $value;
   }
   elseif (filter_var($value, FILTER_VALIDATE_URL) !== FALSE) {
-    return check_url($value);
+    return check_plain($value);
   }
   return $value;
 }
@@ -1215,13 +1217,14 @@ function _islandora_openseadragon_normalize_setting($value) {
  */
 function _islandora_openseadragon_filter_settings(array &$settings, array $default_settings) {
   foreach ($settings as $key => $value) {
-    // We don't want the extra layer of containers from the admin form so strip it out.
+    // We don't want the nested containers in the settings
+    // so we strip them out.
     if (is_array($value) && !isset($default_settings[$key])) {
       $tmp = _islandora_openseadragon_filter_settings($value, $default_settings);
       $settings = array_merge($settings, $tmp);
       unset($settings[$key]);
     }
-    else if (is_array($value)) {
+    elseif (is_array($value)) {
       $settings[$key] = _islandora_openseadragon_filter_settings($value, $default_settings[$key]);
     }
     if (is_string($value) && empty($value)) {
