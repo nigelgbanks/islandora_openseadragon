@@ -21,16 +21,16 @@
       // Use custom element #id if set.
       base = '#' + settings.islandoraOpenSeadragon.options.id;
       if (Drupal.IslandoraOpenSeadragonViewer[base] === undefined) {
-        $(base, document).once('islandoraOpenSeadraonViewer', function () {
+        $(base, document).once('islandoraOpenSeadragonViewer', function () {
           Drupal.IslandoraOpenSeadragonViewer[base] = new Drupal.IslandoraOpenSeadragonViewer(base, settings.islandoraOpenSeadragon);
         });
       }
     },
     detach: function() {
-      $(base).removeClass('islandoraOpenSeadraonViewer-processed');
+      $(base).removeClass('islandoraOpenSeadragonViewer-processed');
       $(base).removeData();
       $(base).off();
-      delete Drupal.LivingstoneManuscriptViewer[base];
+      delete Drupal.IslandoraOpenSeadragonViewer[base];
     }
   };
 
@@ -45,8 +45,7 @@
    * @constructor
    */
   Drupal.IslandoraOpenSeadragonViewer = function (base, settings) {
-    var that = this,
-        viewer = new OpenSeadragon(settings.options);
+    var viewer = new OpenSeadragon(settings.options);
 
     var update_clip = function(event) {
       var viewer = event.eventSource;

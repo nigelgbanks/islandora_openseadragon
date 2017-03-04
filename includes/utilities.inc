@@ -120,21 +120,21 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
 /**
  * Get OpenSeadragon settings.
  *
- * @param bool $to_javascript
- *   If returning settings to javascript strip NULL values.
+ * @param bool $filter_null
+ *   Strip NULL values, used when returning to Javascript.
  *
  * @return array
  *   Configuration options for OpenSeadragon.
  */
-function islandora_openseadragon_get_settings($to_javascript = FALSE) {
+function islandora_openseadragon_get_settings($filter_null = TRUE) {
   $defaults = islandora_openseadragon_default_options();
   $settings = variable_get('islandora_openseadragon_settings', array());
   $settings = array_replace_recursive($defaults, $settings);
   // We have to filter NULL values, to prevent issues with javascript.
-  $is_not_null = function($val) {
+  $is_not_null = function ($val) {
     return !is_null($val);
   };
-  if ($to_javascript) {
+  if ($filter_null) {
     $settings = array_filter($settings, $is_not_null);
   }
   return $settings;
@@ -345,9 +345,7 @@ function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream
   $pid = $datastream->parent->id;
   $dsid = $datastream->id;
   // Currently Loris works straight out of fedora only.
-  return url("{$base_url}/{$pid}/datastreams/{$dsid}/", array(
-    'absolute' => TRUE,
-  ));
+  return file_create_url("{$base_url}/{$pid}/datastreams/{$dsid}");
 }
 
 /**
@@ -378,12 +376,15 @@ function islandora_openseadragon_djatoka_tile_source(AbstractDatastream $datastr
   $dsid = $datastream->id;
   $token = islandora_get_object_token($pid, $dsid, 2);
   return array(
-    'identifier' => url("islandora/object/{$pid}/datastream/{$dsid}/view", array(
-                    'absolute' => TRUE,
-                    'query' => array(
-                      'token' => $token,
-                    ),
-                  )),
+    'identifier' => url("islandora/object/{$pid}/datastream/{$dsid}/view",
+      array(
+        'absolute' => TRUE,
+        'query' => array(
+          'token' => $token,
+        ),
+        'language' => language_default(),
+      )
+    ),
     'width' => NULL,
     'height' => NULL,
     'tileWidth' => 256,
@@ -406,14 +407,14 @@ function islandora_openseadragon_djatoka_tile_source(AbstractDatastream $datastr
 function islandora_openseadragon_viewer_query_solr_for_overlays($pid) {
   // Only get solr results if present and paged content solution pack is
   // enabled.
-  if (empty($_GET['solr']) || module_exists('islandora_paged_content')) {
+  if (empty($_GET['solr']) || !module_exists('islandora_paged_content')) {
     return NULL;
   }
 
   $params = $_GET['solr']['params'];
   $params['fq'][] = format_string('PID:"!pid"', array(
-                      '!pid' => $pid,
-                    ));
+    '!pid' => $pid,
+  ));
 
   module_load_include('inc', 'islandora_paged_content', 'includes/highlighting');
   $highlighting_info = islandora_paged_content_perform_solr_highlighting_query($_GET['solr']['query'], $params);

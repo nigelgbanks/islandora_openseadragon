@@ -51,6 +51,10 @@ function islandora_openseadragon_uninstall() {
     'islandora_openseadragon_tile_size',
     'islandora_openseadragon_tile_overlap',
     'islandora_openseadragon_fit_to_aspect_ratio',
+    'islandora_openseadragon_tilesource',
+    'islandora_openseadragon_djatoka_url',
+    'islandora_openseadragon_iiif_url',
+
   );
   array_walk($variables, 'variable_del');
 }
@@ -61,7 +65,7 @@ function islandora_openseadragon_uninstall() {
  * Add the required table for handling authentication tokens.
  * This is the first instance that has this table.
  */
-function islandora_openseadragon_update_7001(array &$sandbox) {
+function islandora_openseadragon_update_7100(array &$sandbox) {
   $t = get_t();
   // Variable structure has changed.
   $variables = array(
