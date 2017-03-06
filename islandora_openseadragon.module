@@ -87,7 +87,7 @@ function islandora_openseadragon_islandora_viewer_info() {
  * @return string
  *   HTML representation of the OpenSeadragon viewer
  */
-function islandora_openseadragon_callback($params = NULL, $object = NULL) {
+function islandora_openseadragon_callback(array $params = NULL, AbstractObject $object = NULL) {
   module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
   $matches = array();
   preg_match('/datastream\/([^\/]*)\/view/', $params['jp2_url'], $matches);

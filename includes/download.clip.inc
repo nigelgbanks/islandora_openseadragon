@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Defines menu callback for downloading a clip of the given image.
