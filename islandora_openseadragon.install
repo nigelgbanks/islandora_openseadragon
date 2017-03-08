@@ -60,10 +60,10 @@ function islandora_openseadragon_uninstall() {
 }
 
 /**
- * Implements hook_update_N().
+ * Update settings to new format.
  *
- * Add the required table for handling authentication tokens.
- * This is the first instance that has this table.
+ * Migrates any options from the old version to the new version if they still
+ * exist.
  */
 function islandora_openseadragon_update_7100(array &$sandbox) {
   module_load_include('inc', 'islandora_openseadragon', 'includes/admin.form');
