@@ -66,6 +66,8 @@ function islandora_openseadragon_uninstall() {
  * This is the first instance that has this table.
  */
 function islandora_openseadragon_update_7100(array &$sandbox) {
+  module_load_include('inc', 'islandora_openseadragon', 'includes/admin.form');
+  module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
   // Get new OpenSeadragon default settings.
   $new_settings = islandora_openseadragon_default_options();
   // Get the old settings.
@@ -79,6 +81,7 @@ function islandora_openseadragon_update_7100(array &$sandbox) {
   unset($old_settings['wrapOverlays']);
   // The rest of the settings have the same name and will overwrite defaults.
   $new_settings = array_replace($new_settings, $old_settings);
+  _islandora_openseadragon_normalize_settings($new_settings);
   // Save updated OpenSeadragon settings.
   variable_set('islandora_openseadragon_settings', $new_settings);
 
