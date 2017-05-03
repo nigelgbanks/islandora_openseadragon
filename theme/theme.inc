@@ -36,7 +36,7 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
     'pid' => $variables['pid'],
     'imageServer' => variable_get('islandora_openseadragon_tilesource', 'djatoka'),
     'djatokaServerBaseURL' => url(variable_get('islandora_openseadragon_djatoka_url', 'adore-djatoka/resolver')),
-    'iiifServerBaseURL' => url(variable_get('islandora_openseadragon_iiif_url', 'loris')),
+    'iiifServerBaseURL' => url(variable_get('islandora_openseadragon_iiif_url', 'iiif')),
     'fitToAspectRatio' => variable_get('islandora_openseadragon_fit_to_aspect_ratio', FALSE),
     'options' => array(
       'id' => $variables['id'],
