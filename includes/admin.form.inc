@@ -22,7 +22,7 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
   $settings = islandora_openseadragon_get_settings(FALSE);
   $version = islandora_openseadragon_get_installed_version();
   $djatoka_url = islandora_system_settings_form_default_value('islandora_openseadragon_djatoka_url', 'adore-djatoka/resolver', $form_state);
-  $iiif_url = islandora_system_settings_form_default_value('islandora_openseadragon_iiif_url', 'loris', $form_state);
+  $iiif_url = islandora_system_settings_form_default_value('islandora_openseadragon_iiif_url', 'iiif', $form_state);
   $form = array(
     'islandora_openseadragon_tilesource' => array(
       '#type' => 'select',

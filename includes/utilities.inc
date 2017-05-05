@@ -328,11 +328,21 @@ function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
  *   FALSE otherwise.
  */
 function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream) {
-  $base_url = variable_get('islandora_openseadragon_iiif_url', 'loris');
+  $base_url = rtrim(variable_get('islandora_openseadragon_iiif_url', 'iiif'), '/');
   $pid = $datastream->parent->id;
   $dsid = $datastream->id;
-  // Currently Loris works straight out of fedora only.
-  return file_create_url("{$base_url}/{$pid}/datastreams/{$dsid}");
+  $token = islandora_get_object_token($pid, $dsid, 2);
+  $identifier = urlencode(url("islandora/object/{$pid}/datastream/{$dsid}/view",
+    array(
+      'absolute' => TRUE,
+      'query' => array(
+        'token' => $token,
+      ),
+      'language' => language_default(),
+      'https' => false,
+    )
+  ));
+  return file_create_url("$base_url/$identifier");
 }
 
 /**
