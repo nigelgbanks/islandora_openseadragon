@@ -300,7 +300,7 @@ function islandora_openseadragon_default_options() {
  * @param AbstractDatastream $datastream
  *   The datastream for which to fetch the tile source implementation.
  *
- * @return array
+ * @return mixed
  *   The metadata required by the users chosen implementation.
  */
 function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
@@ -317,26 +317,15 @@ function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
 }
 
 /**
- * Image metadata pertinent to the IIIF TileSources implementation.
+ * Image metadata pertinent to the IIIF URL specification.
  *
  * @param AbstractDatastream $datastream
  *   Gets the metadata for viewing the given datastream, it assumes that the
  *   datastream is an image and it's format is supported by the IIIF server.
  *
- * @return array
- *   An associative array with the required metadata for AdoraDjatoka tile
- *   source to be rendered.
- *   - identifier: A URL where the datastream image can be accessed.
- *   - width: The width of the image in pixels if known.
- *   - height: The height of the image in pixels if known.
- *   - tileWidth: The width of the tiles to assumed to make up each pyramid
- *     layer in pixels.
- *   - tileHeight: The height of the tiles to assumed to make up each pyramid
- *     layer in pixels.
- *   - tileOverlap: The number of pixels each tile is expected to overlap
- *     touching tiles.
- *   - minLevel: The minimum level to attempt to load.
- *   - maxLevel: The maximum level to attempt to load.
+ * @return string|bool
+ *   The IIIF URL to the image source if the URL can be successfully created,
+ *   FALSE otherwise.
  */
 function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream) {
   $base_url = variable_get('islandora_openseadragon_iiif_url', 'loris');
