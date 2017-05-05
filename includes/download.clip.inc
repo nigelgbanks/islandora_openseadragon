@@ -23,7 +23,7 @@ function islandora_openseadragon_download_clip(AbstractObject $object) {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
       curl_setopt($ch, CURLOPT_HEADER, 0);
-      curl_setopt($ch, CURLOPT_URL, $clip_parts['djatoka_image_url']);
+      curl_setopt($ch, CURLOPT_URL, $clip_parts['image_url']);
       curl_exec($ch);
       curl_close($ch);
     }

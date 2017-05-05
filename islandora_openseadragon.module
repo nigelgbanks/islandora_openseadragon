@@ -118,7 +118,7 @@ function islandora_openseadragon_preprocess_islandora_object_print(array &$varia
         '#weight' => 0,
         '#prefix' => "<div id='clip'>",
         '#markup' => theme_image(array(
-          'path' => $clip_parts['djatoka_image_url'],
+          'path' => $clip_parts['image_url'],
           'attributes' => $clip_parts['dimensions'],
         )),
         '#suffix' => '</div>',

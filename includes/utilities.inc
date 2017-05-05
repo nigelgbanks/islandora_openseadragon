@@ -39,7 +39,7 @@ function islandora_openseadragon_get_installed_version() {
  *   FALSE when invalid parameters passed in, otherwise an array containing:
  *   -original_params (string): A rawurlencoded string which can be used as or
  *   appended to the URL query string.
- *   -djatoka_image_url (string): URL to retrieve the image from Djatoka.
+ *   -image_url (string): URL to retrieve the image from the image server.
  *   -dimensions (array): An array containing the width and height of the image.
  *   Used when rendering the image on the print page.
  */
@@ -99,7 +99,7 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
       // XXX: Using drupal_http_build_query to avoid changing the underlying
       // functionality in the solution packs that currently implement.
       'original_params' => drupal_http_build_query($allowed_djatoka_params),
-      'djatoka_image_url' => $url,
+      'image_url' => $url,
       'dimensions' => $dimensions,
     );
   }
@@ -111,7 +111,7 @@ function islandora_openseadragon_construct_clip_url($params, $download = FALSE) 
     $format = "default.jpg";
     return array(
       'original_params' => drupal_http_build_query($decoded_params),
-      'djatoka_image_url' => "{$identifier}/{$region}/{$size}/{$rotation}/{$format}",
+      'image_url' => "{$identifier}/{$region}/{$size}/{$rotation}/{$format}",
       'dimensions' => array(),
     );
   }
