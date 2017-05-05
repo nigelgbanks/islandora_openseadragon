@@ -374,9 +374,8 @@ function islandora_openseadragon_djatoka_tile_source(AbstractDatastream $datastr
     ),
     'width' => NULL,
     'height' => NULL,
-    'tileWidth' => 256,
-    'tileHeight' => 256,
-    'tileOverlap' => 2,
+    'tileSize' => variable_get('islandora_openseadragon_tile_size', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_SIZE),
+    'tileOverlap' => variable_get('islandora_openseadragon_tile_overlap', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_OVERLAP),
     'minLevel' => NULL,
     'maxLevel' => NULL,
   );

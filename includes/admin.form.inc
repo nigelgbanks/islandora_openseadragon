@@ -83,6 +83,27 @@ function islandora_openseadragon_admin(array $form, array &$form_state) {
         '#description' => t('The location of the IIIF Image Server.'),
       ),
     ),
+    'tilesource' => array(
+      '#type' => 'fieldset',
+      '#title' => t('Open Seadragon Tile Source settings'),
+      '#description' => t('<p>These settings will apply to all tile sources globally. See the <a href="https://openseadragon.github.io/docs/OpenSeadragon.TileSource.html#TileSource">documentation</a> for more details.</p>'),
+      'islandora_openseadragon_tile_size' => array(
+        '#type' => 'textfield',
+        '#title' => t('Tile Size'),
+        '#default_value' => variable_get('islandora_openseadragon_tile_size', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_SIZE),
+        '#element_validate' => array('element_validate_number'),
+        '#size' => 10,
+        '#description' => t('The size of the tiles to assumed to make up each pyramid layer in pixels. Tile size determines the point at which the image pyramid must be divided into a matrix of smaller images.'),
+      ),
+      'islandora_openseadragon_tile_overlap' => array(
+        '#type' => 'textfield',
+        '#title' => t('Tile Overlap'),
+        '#default_value' => variable_get('islandora_openseadragon_tile_overlap', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_OVERLAP),
+        '#element_validate' => array('element_validate_number'),
+        '#size' => 10,
+        '#description' => t('The number of pixels each tile is expected to overlap touching tiles.'),
+      ),
+    ),
     'openseadragon' => array(
       '#type' => 'fieldset',
       '#title' => t('Open Seadragon Viewer settings'),
@@ -1057,7 +1078,7 @@ function islandora_openseadragon_admin_ajax_djatoka_url(array $form, array $form
  *   A message describing the accessibility of the Adore-Djatoka image resolver.
  */
 function islandora_openseadragon_admin_form_djatoka_access_message($path) {
-  $url = url($path, array(
+  $url = url("http://localhost/{$path}", array(
     'absolute' => TRUE,
     'query' => array(
       'url_ver' => 'Z39.88-2004',
@@ -1098,7 +1119,7 @@ function islandora_openseadragon_djatoka_url_validate(array $element, array &$fo
     form_error($element, t('This field is required.'));
   }
   else {
-    $url = url($path, array(
+    $url = url("http://localhost/{$path}", array(
       'absolute' => TRUE,
       'query' => array(
         'url_ver' => 'Z39.88-2004',
