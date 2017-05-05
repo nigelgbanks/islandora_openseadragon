@@ -50,10 +50,10 @@
     var update_clip = function(event) {
       var viewer = event.eventSource;
       var fitWithinBoundingBox = function(d, max) {
-        if (d.width/d.height > max.x/max.y) {
-          return new OpenSeadragon.Point(max.x, parseInt(d.height * max.x/d.width));
+        if (d.width / d.height > max.x / max.y) {
+          return new OpenSeadragon.Point(max.x, parseInt(d.height * max.x / d.width));
         } else {
-          return new OpenSeadragon.Point(parseInt(d.width * max.y/d.height),max.y);
+          return new OpenSeadragon.Point(parseInt(d.width * max.y / d.height), max.y);
         }
       };
 
@@ -91,11 +91,11 @@
       var size = new OpenSeadragon.Rect(0, 0, source.dimensions.x, source.dimensions.y);
       var container = viewer.viewport.getContainerSize();
       var fit_source = fitWithinBoundingBox(size, container);
-      var total_zoom = fit_source.x/source.dimensions.x;
-      var container_zoom = fit_source.x/container.x;
+      var total_zoom = fit_source.x / source.dimensions.x;
+      var container_zoom = fit_source.x / container.x;
       var level = (zoom * total_zoom) / container_zoom;
-      var box = getDisplayRegion(viewer, new OpenSeadragon.Point(parseInt(source.dimensions.x*level), parseInt(source.dimensions.y*level)));
-      var scaled_box = new OpenSeadragon.Rect(parseInt(box.x/level), parseInt(box.y/level), parseInt(box.width/level), parseInt(box.height/level));
+      var box = getDisplayRegion(viewer, new OpenSeadragon.Point(parseInt(source.dimensions.x * level), parseInt(source.dimensions.y * level)));
+      var scaled_box = new OpenSeadragon.Rect(parseInt(box.x / level), parseInt(box.y / level), parseInt(box.width / level), parseInt(box.height / level));
       var params = {};
       if (settings.imageServer == 'djatoka') {
         params = {

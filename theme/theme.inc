@@ -16,13 +16,13 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
   $library_path = libraries_get_path('openseadragon');
   if (isset($variables['fedora_object']) && $variables['fedora_object'] !== NULL) {
     $message = t("The parameter 'fedora_object' in theme('islandora_openseadragon_viewer') has been deprecated. As of 7.x-1.9, please update your code before the next release.");
-    trigger_error($message, E_USER_DEPRECATED);
+    trigger_error(check_plain($message), E_USER_DEPRECATED);
     // Attempt to convert 'fedora_object', to 'pid'.
     $variables['pid'] = $variables['fedora_object']->id;
   }
   if (isset($variables['uri']) && $variables['uri'] !== '') {
     $message = t("The parameter 'uri' in theme('islandora_openseadragon_viewer') has been deprecated. As of 7.x-1.9, please update your code before the next release.");
-    trigger_error($message, E_USER_DEPRECATED);
+    trigger_error(check_plain($message), E_USER_DEPRECATED);
     // Attempt to convert the 'uri' to 'tile_sources'.
     $matches = array();
     preg_match('/datastream\/([^\/]*)\/view/', $variables['uri'], $matches);
