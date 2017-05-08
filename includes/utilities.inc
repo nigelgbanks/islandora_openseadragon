@@ -339,7 +339,7 @@ function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream
         'token' => $token,
       ),
       'language' => language_default(),
-      'https' => false,
+      'https' => FALSE,
     )
   ));
   return file_create_url("$base_url/$identifier");
