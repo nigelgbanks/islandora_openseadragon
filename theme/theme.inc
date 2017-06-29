@@ -29,7 +29,7 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
     $dsid = isset($matches[1]) ? $matches[1] : FALSE;
     $object = islandora_object_load($variables['pid']);
     $datastream = $dsid && $object[$dsid] ? $object[$dsid] : FALSE;
-    $variables['tile_sources'] = $datastream ? array(islandora_openseadragon_tile_source($datastream)) : array();
+    $variables['tile_sources'] = $datastream ? array(islandora_openseadragon_datastream_tile_source($datastream)) : array();
   }
   $variables['id'] = $variables['viewer_id'] = 'islandora-openseadragon';
   $variables['settings'] = array(

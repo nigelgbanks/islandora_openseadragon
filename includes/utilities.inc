@@ -297,19 +297,19 @@ function islandora_openseadragon_default_options() {
 /**
  * Image metadata pertinent to the users chosen TileSources implementation.
  *
- * @param AbstractDatastream $datastream
- *   The datastream for which to fetch the tile source implementation.
+ * @param string $identifier
+ *   The URL to the image to generate the tile source for.
  *
  * @return mixed
  *   The metadata required by the users chosen implementation.
  */
-function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
+function islandora_openseadragon_identifier_tile_source($identifier) {
   switch (variable_get('islandora_openseadragon_tilesource', 'djatoka')) {
     case 'djatoka':
-      return islandora_openseadragon_djatoka_tile_source($datastream);
+      return islandora_openseadragon_djatoka_tile_source($identifier);
 
     case 'iiif':
-      return islandora_openseadragon_iiif_tile_source($datastream);
+      return islandora_openseadragon_iiif_tile_source($identifier);
 
     default;
       return array();
@@ -317,40 +317,40 @@ function islandora_openseadragon_tile_source(AbstractDatastream $datastream) {
 }
 
 /**
- * Image metadata pertinent to the IIIF URL specification.
+ * Image metadata pertinent to the users chosen TileSources implementation.
  *
  * @param AbstractDatastream $datastream
- *   Gets the metadata for viewing the given datastream, it assumes that the
- *   datastream is an image and it's format is supported by the IIIF server.
+ *   The datastream for which to fetch the tile source implementation.
+ *
+ * @return mixed
+ *   The metadata required by the users chosen implementation.
+ */
+function islandora_openseadragon_datastream_tile_source(AbstractDatastream $datastream) {
+  $identifier = islandora_openseadragon_identifier_url($datastream);
+  return islandora_openseadragon_identifier_tile_source($identifier);
+}
+
+/**
+ * Image metadata pertinent to the IIIF URL specification.
+ *
+ * @param string $identifier
+ *   The URL to the image to generate the tile source for.
  *
  * @return string|bool
  *   The IIIF URL to the image source if the URL can be successfully created,
  *   FALSE otherwise.
  */
-function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream) {
+function islandora_openseadragon_iiif_tile_source($identifier) {
   $base_url = rtrim(variable_get('islandora_openseadragon_iiif_url', 'iiif'), '/');
-  $pid = $datastream->parent->id;
-  $dsid = $datastream->id;
-  $token = islandora_get_object_token($pid, $dsid, 2);
-  $identifier = urlencode(url("islandora/object/{$pid}/datastream/{$dsid}/view",
-    array(
-      'absolute' => TRUE,
-      'query' => array(
-        'token' => $token,
-      ),
-      'language' => language_default(),
-      'https' => FALSE,
-    )
-  ));
+  $identifier = urlencode($identifier);
   return file_create_url("$base_url/$identifier");
 }
 
 /**
  * Image metadata pertinent to the Djatoka TileSources implementation.
  *
- * @param AbstractDatastream $datastream
- *   Gets the metadata for viewing the given datastream, it assumes that the
- *   datastream is an image and it's format is supported by Adore Djatoka.
+ * @param string $identifier
+ *   The URL to the image to generate the tile source for.
  *
  * @return array
  *   An associative array with the required metadata for AdoraDjatoka tile
@@ -367,27 +367,41 @@ function islandora_openseadragon_iiif_tile_source(AbstractDatastream $datastream
  *   - minLevel: The minimum level to attempt to load.
  *   - maxLevel: The maximum level to attempt to load.
  */
-function islandora_openseadragon_djatoka_tile_source(AbstractDatastream $datastream) {
+function islandora_openseadragon_djatoka_tile_source($identifier) {
   module_load_include('inc', 'islandora', 'includes/authtokens');
-  $pid = $datastream->parent->id;
-  $dsid = $datastream->id;
-  $token = islandora_get_object_token($pid, $dsid, 2);
   return array(
-    'identifier' => url("islandora/object/{$pid}/datastream/{$dsid}/view",
-      array(
-        'absolute' => TRUE,
-        'query' => array(
-          'token' => $token,
-        ),
-        'language' => language_default(),
-      )
-    ),
+    'identifier' => $identifier,
     'width' => NULL,
     'height' => NULL,
     'tileSize' => variable_get('islandora_openseadragon_tile_size', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_SIZE),
     'tileOverlap' => variable_get('islandora_openseadragon_tile_overlap', ISLANDORA_OPENSEADRAGON_DEFAULT_TILE_OVERLAP),
     'minLevel' => NULL,
     'maxLevel' => NULL,
+  );
+}
+
+/**
+ * Generates a URL to the given image datastream the image server can access.
+ *
+ * @param AbstractDatastream $datastream
+ *   Used to generates the identifier URL.
+ *
+ * @return string
+ *   The URL at which an image server can access the given image datastream.
+ */
+function islandora_openseadragon_identifier_url(AbstractDatastream $datastream) {
+  $pid = $datastream->parent->id;
+  $dsid = $datastream->id;
+  $token = islandora_get_object_token($pid, $dsid, 2);
+  return url("islandora/object/{$pid}/datastream/{$dsid}/view",
+    array(
+      'absolute' => TRUE,
+      'query' => array(
+        'token' => $token,
+      ),
+      'language' => language_default(),
+      'https' => FALSE,
+    )
   );
 }
 
