@@ -74,11 +74,17 @@ function islandora_openseadragon_update_7100(array &$sandbox) {
   $old_settings = variable_get('islandora_openseadragon_settings', array());
 
   if (isset($old_settings['djatokaServerBaseURL'])) {
+    $message = t('The Drupal variable islandora_openseadragon_settings["djatokaServerBaseURL"] has been moved to islandora_openseadragon_settings["islandora_openseadragon_djatoka_url"].');
+    trigger_error(check_plain($message), E_USER_DEPRECATED);
     $new_settings['islandora_openseadragon_djatoka_url'] = $old_settings['djatokaServerBaseURL'];
     unset($old_settings['djatokaServerBaseURL']);
   }
   // No longer exists.
-  unset($old_settings['wrapOverlays']);
+  if (isset($old_settings['wrapOverlays'])) {
+    $message = t('The Drupal variable islandora_openseadragon_settings["wrapOverlays"] is no longer in use and has been removed.');
+    trigger_error(check_plain($message), E_USER_DEPRECATED);
+    unset($old_settings['wrapOverlays']);
+  }
   // The rest of the settings have the same name and will overwrite defaults.
   $new_settings = array_replace($new_settings, $old_settings);
   _islandora_openseadragon_normalize_settings($new_settings);
@@ -86,11 +92,5 @@ function islandora_openseadragon_update_7100(array &$sandbox) {
   variable_set('islandora_openseadragon_settings', $new_settings);
 
   $t = get_t();
-  // Remove variables no longer configurable.
-  $variables = array(
-    'islandora_openseadragon_tile_size',
-    'islandora_openseadragon_tile_overlap',
-  );
-  array_walk($variables, 'variable_del');
   return $t("Islandora Openseadragon updates complete");
 }

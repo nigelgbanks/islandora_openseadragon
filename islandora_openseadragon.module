@@ -42,7 +42,7 @@ function islandora_openseadragon_theme() {
   return array(
     'islandora_openseadragon_viewer' => array(
       'variables' => array(
-        // @deprecated (7.x-1.9):
+        // @deprecated (7.x-1.10):
         // 'uri' and 'fedora_object' has been replaced by the use of 'pid' and
         // 'tile_sources'.
         'uri' => '',
