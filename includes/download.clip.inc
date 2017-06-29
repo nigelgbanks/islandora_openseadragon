@@ -35,5 +35,5 @@ function islandora_openseadragon_download_clip(AbstractObject $object) {
       ));
     }
   }
-  exit();
+  drupal_exit();
 }
