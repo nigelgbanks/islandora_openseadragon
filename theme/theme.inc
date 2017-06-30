@@ -23,13 +23,7 @@ function template_preprocess_islandora_openseadragon_viewer(array &$variables) {
   if (isset($variables['uri']) && $variables['uri'] !== '') {
     $message = t("The parameter 'uri' in theme('islandora_openseadragon_viewer') has been deprecated. As of 7.x-1.10, please update your code before the next release.");
     trigger_error(check_plain($message), E_USER_DEPRECATED);
-    // Attempt to convert the 'uri' to 'tile_sources'.
-    $matches = array();
-    preg_match('/datastream\/([^\/]*)\/view/', $variables['uri'], $matches);
-    $dsid = isset($matches[1]) ? $matches[1] : FALSE;
-    $object = islandora_object_load($variables['pid']);
-    $datastream = $dsid && $object[$dsid] ? $object[$dsid] : FALSE;
-    $variables['tile_sources'] = $datastream ? array(islandora_openseadragon_datastream_tile_source($datastream)) : array();
+    $variables['tile_sources'] = array(islandora_openseadragon_identifier_tile_source($variables['uri']));
   }
   $variables['id'] = $variables['viewer_id'] = 'islandora-openseadragon';
   $variables['settings'] = array(

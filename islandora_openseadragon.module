@@ -96,10 +96,17 @@ function islandora_openseadragon_islandora_viewer_info() {
  */
 function islandora_openseadragon_callback(array $params = array(), AbstractObject $object = NULL) {
   module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
+  $pid = isset($object->id) ? $object->id : NULL;
+  if ($pid == NULL && isset($params['jp2_url']))  {
+    // Attempt to extract it from the 'jp2_url' if the object is not provided.
+    $matches = array();
+    preg_match('/object\/([^\/]*)\/datastream/', $params['jp2_url'], $matches);
+    $pid = isset($matches[1]) ? $matches[1] : NULL;
+  }
   $tile_sources = isset($params['jp2_url']) ?
-    islandora_openseadragon_identifier_tile_source($params['jp2_url']) :
+    array(islandora_openseadragon_identifier_tile_source($params['jp2_url'])) :
     array();
-  return theme('islandora_openseadragon_viewer', array('pid' => $object->id, 'tile_sources' => $tile_sources));
+  return theme('islandora_openseadragon_viewer', array('pid' => $pid, 'tile_sources' => $tile_sources));
 }
 
 /**
