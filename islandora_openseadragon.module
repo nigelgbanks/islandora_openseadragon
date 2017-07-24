@@ -97,7 +97,7 @@ function islandora_openseadragon_islandora_viewer_info() {
 function islandora_openseadragon_callback(array $params = array(), AbstractObject $object = NULL) {
   module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
   $pid = isset($object->id) ? $object->id : NULL;
-  if ($pid == NULL && isset($params['jp2_url']))  {
+  if ($pid == NULL && isset($params['jp2_url'])) {
     // Attempt to extract it from the 'jp2_url' if the object is not provided.
     $matches = array();
     preg_match('/object\/([^\/]*)\/datastream/', $params['jp2_url'], $matches);
