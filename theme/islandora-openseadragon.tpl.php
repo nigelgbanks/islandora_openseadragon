@@ -2,9 +2,9 @@
 
 /**
  * @file
- *
  * Template file for Islandora OpenSeadragon Viewer.
  *
+ * Template variables include.
  * string $viewer_id
  *   The identifier where OpenSeadragon will be rendered.
  * string $uri
