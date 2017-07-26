@@ -63,7 +63,7 @@
         height: parseInt(options.height),
         tileWidth: parseInt(options.tileWidth) || 256,
         tileHeight: parseInt(options.tileHeight) || 256,
-        tileOverlap: parseInt(options.tileOverlap) || 2,
+        tileOverlap: parseInt(options.tileOverlap) || 0,
         minLevel: parseInt(options.minLevel) || 0,
         maxLevel: parseInt(options.maxLevel) || parseInt(options.levels),
       };
